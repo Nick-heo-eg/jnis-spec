@@ -45,3 +45,5 @@ See [TODO_PROOF.md](TODO_PROOF.md) for the current proof validation checklist.
 ---
 
 `JNIS_VERSION: 1.1.0` · `Status: Frozen for proof validation`
+
+Hooks are repository-scoped (no global hooks are used)
