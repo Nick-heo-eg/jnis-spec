@@ -1,0 +1,62 @@
+schema_id: trace_schema
+version: "1.1.0"
+description: Schema for trace.jsonl records.
+
+record:
+  required:
+    - trace_id
+    - contract_hash
+    - execution_id
+    - timestamp
+    - prev_hash
+    - hash
+
+  fields:
+    trace_id:
+      type: string
+      description: Unique identifier for this trace record.
+    contract_hash:
+      type: string
+      description: SHA256 hash of the contract under which this trace was produced.
+    execution_id:
+      type: string
+      description: Unique identifier for the execution run that produced this record.
+    timestamp:
+      type: string
+      format: iso8601
+      description: UTC timestamp of record creation.
+    prev_hash:
+      type: string
+      nullable: true
+      description: Hash of the previous record. Null for the first record.
+    hash:
+      type: string
+      description: SHA256 of this record (excluding hash and prev_hash fields).
+    proof:
+      type: object
+      required:
+        - decision_made
+      fields:
+        decision_made:
+          type: boolean
+          value: false
+          description: Must always be false. AI does not make decisions.
+    action_decisions:
+      type: array
+      items:
+        required:
+          - action
+          - allowed
+          - reason
+          - executed
+        fields:
+          executed:
+            type: boolean
+            value: false
+            description: Must always be false in AI-path trace.
+
+constraints:
+  append_only: true
+  hash_chain_required: true
+  decision_made_always_false: true
+  executed_always_false: true

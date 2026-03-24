@@ -1,0 +1,47 @@
+contract_id: execution_boundary
+version: "1.1.0"
+description: >
+  Invariants that enforce execution boundary constraints.
+  All execution must flow through a single, hash-bound, traced path.
+
+invariants:
+  inv_single_execution_path:
+    id: inv_single_execution_path
+    description: >
+      All execution must occur through jnis_exec() only.
+      Direct python invocation, subprocess calls, and os.exec* are forbidden
+      as execution entry points.
+    allowed_entry: jnis_exec
+    forbidden_entries:
+      - python (direct)
+      - subprocess.run
+      - subprocess.call
+      - os.execv
+      - os.execve
+      - os.spawnl
+    on_violation: FAIL
+
+  inv_hash_bound_execution:
+    id: inv_hash_bound_execution
+    description: >
+      Execution is only permitted when contract_hash is present and matches
+      the loaded contract. Execution without a valid contract_hash is rejected
+      unconditionally.
+    required_inputs:
+      - contract_hash
+      - artifact_path
+      - trace_id
+      - policy_hash
+    on_missing_input: REJECT
+    on_hash_mismatch: REJECT
+
+  inv_trace_required:
+    id: inv_trace_required
+    description: >
+      Every execution attempt must produce or reference a trace.jsonl.
+      Execution without trace output is a contract violation.
+      Trace must satisfy append-only and hash-chain constraints.
+    trace_required: true
+    append_only: true
+    hash_chain_required: true
+    on_violation: FAIL

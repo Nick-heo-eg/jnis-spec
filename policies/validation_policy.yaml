@@ -1,0 +1,41 @@
+policy_id: validation_policy
+version: "1.1.0"
+description: >
+  Validation must run in the following fixed order.
+  Any deviation, reordering, or step skip is a policy violation and results in FAIL.
+
+validation_pipeline:
+  order_enforced: true
+  on_order_violation: FAIL
+
+  steps:
+    - step: 1
+      id: schema_check
+      description: Load and verify contract schema. Verify generation_manifest if present.
+      on_failure: FAIL_IMMEDIATE
+
+    - step: 2
+      id: forbidden_check
+      description: AST scan for forbidden patterns (subprocess, os.system, socket, requests, silent_except).
+      on_failure: FAIL_IMMEDIATE
+
+    - step: 3
+      id: invariant_static
+      description: Static trace invariant check without executing artifact.
+      on_failure: FAIL_IMMEDIATE
+
+    - step: 4
+      id: sandbox_run
+      description: Single isolated subprocess execution of artifact.
+      on_failure: FAIL_IMMEDIATE
+
+    - step: 5
+      id: trace_check
+      description: Validate trace.jsonl structure, hash chain, and append-only constraint.
+      on_failure: FAIL_IMMEDIATE
+
+  rules:
+    - Steps must run in order 1 → 2 → 3 → 4 → 5.
+    - No step may be skipped.
+    - First failure stops the pipeline immediately.
+    - PASS is only returned when all 5 steps succeed.

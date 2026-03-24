@@ -1,0 +1,58 @@
+contract_id: non_interference
+version: "1.1.0"
+description: >
+  Invariants that enforce judgment non-interference.
+  No code operating under this contract may express, infer, or imply
+  decision authority over execution.
+
+invariants:
+  inv_no_decision_semantics:
+    id: inv_no_decision_semantics
+    description: >
+      Trace records and generated code must not contain decision-semantic terms.
+      Presence of any forbidden keyword in output or trace is a contract violation.
+    forbidden_keywords:
+      - allow
+      - deny
+      - risk
+      - safe
+      - compliant
+      - approve
+      - reject
+      - permit
+      - authorized
+    scope:
+      - trace_records
+      - generated_code
+      - generation_manifest
+    on_violation: FAIL
+
+  inv_no_policy_inference:
+    id: inv_no_policy_inference
+    description: >
+      Code must not derive, compute, or return a policy decision.
+      Functions must not accept or return objects named policy, decision, verdict, ruling.
+    forbidden_return_patterns:
+      - policy
+      - decision
+      - verdict
+      - ruling
+    scope:
+      - generated_code
+    on_violation: FAIL
+
+  inv_no_hidden_side_effect:
+    id: inv_no_hidden_side_effect
+    description: >
+      Code must not perform side effects outside its declared trace output.
+      Network calls, file writes outside trace path, and env mutation are forbidden.
+    forbidden_patterns:
+      - subprocess
+      - os.system
+      - os.popen
+      - socket
+      - requests
+      - silent_except
+    scope:
+      - generated_code
+    on_violation: FAIL

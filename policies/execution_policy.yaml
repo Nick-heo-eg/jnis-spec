@@ -1,0 +1,24 @@
+policy_id: execution_policy
+version: "1.1.0"
+description: >
+  Execution is permitted only after all validation steps pass in order.
+  Any out-of-order execution or step bypass is a policy violation.
+
+execution_rules:
+  - rule: contract_required
+    description: No execution without a loaded, hash-verified contract.
+    on_violation: REJECT
+
+  - rule: validation_must_pass
+    description: Execution is blocked unless validator returns passed=true.
+    on_violation: BLOCK
+
+  - rule: single_path_only
+    description: Only jnis_exec() may trigger execution.
+    on_violation: BLOCK
+
+  - rule: no_direct_invocation
+    description: >
+      Direct python script invocation (outside jnis_exec) is forbidden
+      as an execution entry point.
+    on_violation: BLOCK
