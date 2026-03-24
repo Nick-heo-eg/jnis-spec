@@ -136,6 +136,25 @@ This is the **determinism guarantee** of J-NIS. A gate that produces different r
 
 ---
 
+## Replay Requirement
+
+The trace must be sufficient to reconstruct `policy_input` and `action_decisions` independently.
+
+Specifically:
+
+1. `policy_input` must be stored verbatim in every record
+2. `action_decisions` must include `action`, `allowed`, `reason`, and `executed` per entry
+3. Re-running the gate function on stored `policy_input` must produce the same `allowed` and `reason`
+
+This requirement enables compliance verification without access to the original system.
+
+```bash
+python scripts/replay_demo.py decisions.jsonl
+# PASS — L2 (trace reproducible) + L3 (invariants verified)
+```
+
+---
+
 ## OpenTelemetry Attribute Mapping
 
 J-NIS fields map to the `gen_ai.non_interference.*` OTel namespace:

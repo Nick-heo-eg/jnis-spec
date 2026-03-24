@@ -115,6 +115,38 @@ See the [Contact](#contact) section below.
 | [QUICKSTART.md](QUICKSTART.md) | Minimal 10-line implementation |
 | [ZERO_SETUP.md](ZERO_SETUP.md) | 30-second single-file demo |
 | [ADOPTION_FLOW.md](ADOPTION_FLOW.md) | 5-step adoption loop |
+| [COMPLIANCE.md](COMPLIANCE.md) | Compliance levels L0–L3 with verification methods |
+
+---
+
+## Compliance Levels
+
+| Level | Requirement | Verified by |
+|---|---|---|
+| L0 | `decision_made: false` present | trace inspection |
+| L1 | `action_decisions` recorded | trace inspection |
+| L2 | gate is deterministic, trace reproducible | `scripts/replay_demo.py` |
+| L3 | all invariants hold across full trace | `validate_non_interference.py` |
+
+A system satisfying L3 satisfies all lower levels.
+See [COMPLIANCE.md](COMPLIANCE.md) for full definitions.
+
+---
+
+## Reproducibility
+
+J-NIS compliance must be independently verifiable from trace logs.
+
+**Compliance must be verifiable without access to the original system.**
+
+The trace record alone — `policy_input` + `action_decisions` + `proof` — is sufficient to verify compliance at all four levels.
+
+```bash
+# L2 + L3 combined verification
+python scripts/replay_demo.py decisions.jsonl
+# PASS — L2 (trace reproducible) + L3 (invariants verified)
+# VERIFIED — this trace satisfies that requirement.
+```
 
 ---
 

@@ -110,6 +110,7 @@ def _quick_test():
     if ok:
         print("JNIS_COMPLIANT — all records satisfy J-NIS guarantees")
         print("JNIS_STANDARD_V1_1_OK")
+        print("Compliance Level: L3 (invariants verified)")
         print("J-NIS compliance satisfied")
         print("No additional integration required for compliance")
         print("Invariant check: decision authority not present")
@@ -145,6 +146,7 @@ def main():
     if ok:
         print("JNIS_COMPLIANT — all records satisfy J-NIS guarantees")
         print("JNIS_STANDARD_V1_1_OK")
+        print("Compliance Level: L3 (invariants verified)")
         print("J-NIS compliance satisfied")
         print("No additional integration required for compliance")
         print("Invariant check: decision authority not present")
