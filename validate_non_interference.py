@@ -85,9 +85,48 @@ def validate(path: pathlib.Path):
     return (len(failures) == 0), failures, warnings, total
 
 
+_MOCK_RECORD = {
+    "jnis_version": "v1.0.1",
+    "timestamp": "2026-01-01T00:00:00+00:00",
+    "policy_input": {
+        "embed_state": "ACTIVE", "embed_rss": 512, "embed_idle": 30,
+        "stale": False, "collector_ok": True,
+    },
+    "action_decisions": [{"action": "restart_service", "allowed": True,
+                           "reason": "GATE_PASSED", "executed": False}],
+    "proof": {"actor": "quick_test", "authority": "evidence_only", "decision_made": False},
+}
+
+
+def _quick_test():
+    import tempfile, os
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".jsonl", delete=False) as f:
+        f.write(json.dumps(_MOCK_RECORD) + "\n")
+        tmp = f.name
+    ok, failures, warnings, total = validate(pathlib.Path(tmp))
+    os.unlink(tmp)
+    print("Quick test (mock policy_input)")
+    print(f"Records checked: {total}")
+    if ok:
+        print("JNIS_COMPLIANT — all records satisfy J-NIS guarantees")
+        print("For full reference implementation, see README Contact section:")
+        print("  https://github.com/Nick-heo-eg/jnis-spec#contact")
+        sys.exit(0)
+    else:
+        print(f"JNIS_VIOLATION — {len(failures)} violation(s):")
+        for f in failures:
+            print(f"  {f}")
+        sys.exit(1)
+
+
 def main():
+    if len(sys.argv) >= 2 and sys.argv[1] == "--quick-test":
+        _quick_test()
+        return
+
     if len(sys.argv) < 2:
         print("Usage: python validate_non_interference.py <decisions.jsonl>")
+        print("       python validate_non_interference.py --quick-test")
         sys.exit(1)
 
     path = pathlib.Path(sys.argv[1])

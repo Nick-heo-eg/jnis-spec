@@ -1,9 +1,10 @@
 # QUICKSTART — J-NIS in 10 Lines
 
-> **You can implement J-NIS in under 10 lines.**
-> No framework. No package. No state object. Copy, run, validate.
+> **No dependencies required.**
+> You can implement J-NIS in under 10 lines — no framework, no package, no state object.
+> Copy, run, validate.
 
-The minimum viable J-NIS implementation.
+The minimum viable J-NIS implementation. For instant zero-setup demo, see [ZERO_SETUP.md](ZERO_SETUP.md).
 
 ---
 

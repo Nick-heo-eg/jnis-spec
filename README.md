@@ -21,6 +21,13 @@ Three structural rules:
 2. `decision_made` is always `false` in the trace.
 3. `allowed` and `executed` are always separate fields.
 
+**Try J-NIS in 30 seconds → [ZERO_SETUP.md](ZERO_SETUP.md)**
+
+---
+
+**Without J-NIS:** implicit decisions, no proof of non-interference.
+**With J-NIS:** provable non-interference, verifiable trace, structural separation.
+
 ---
 
 ## Traditional AI vs J-NIS
@@ -91,8 +98,9 @@ This implementation demonstrates:
 - Streamlit UI for real-time observation
 
 Early-stage reference implementation exists and is actively used internally.
+Minimal systems have already validated J-NIS compliance internally.
 
-For access requests, open an issue with **"Request: J-NIS reference access"**
+If you need a production-grade implementation, see the [Contact](#contact) section.
 
 ---
 
@@ -116,6 +124,8 @@ python validate_non_interference.py your_decisions.jsonl
 
 Compliance does not require the reference implementation. The spec and validator are sufficient.
 
+**If your system produces `action_decisions` with `decision_made: false`, you are already J-NIS compliant.**
+
 ---
 
 ## Adoption Path
@@ -126,12 +136,14 @@ See [ADOPTION_FLOW.md](ADOPTION_FLOW.md) — the full 5-step loop from concept t
 
 ## Contact
 
-If you are interested in applying J-NIS to real systems:
+You don't need to contact anyone to use J-NIS. The spec, validator, and quickstart are fully self-contained.
+
+If you need a production-grade implementation:
 
 - [Open a GitHub issue](../../issues/new/choose) — use the **"Request: J-NIS reference access"** template
 - Or contact via profile: [github.com/Nick-heo-eg](https://github.com/Nick-heo-eg)
 
-Access to a production-grade reference implementation may be provided.
+A full reference implementation (Streamlit UI, deterministic replay, OTel trace) may be made available.
 
 ---
 
