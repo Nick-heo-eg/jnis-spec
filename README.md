@@ -2,9 +2,9 @@
 
 > **AI must not execute decisions, only evaluate boundaries.**
 
-This draft is already production-usable for boundary enforcement and audit trace.
+This draft is production-usable for non-interference enforcement.
 
-`[J-NIS Compliant]` · No dependencies · No permission required · No system redesign needed
+`[J-NIS Compliant]` · No dependencies · Open standard · No system redesign needed
 
 ---
 
@@ -23,9 +23,9 @@ Three structural rules:
 2. `decision_made` is always `false` in the trace.
 3. `allowed` and `executed` are always separate fields.
 
-> **J-NIS does not add new functionality. It removes decision authority from AI.**
+> **J-NIS defines constraints, not capabilities.**
 
-If your system outputs `decision_made: false`, you are already compliant.
+If your system outputs `decision_made: false`, it satisfies J-NIS compliance.
 
 **Try J-NIS in 30 seconds → [ZERO_SETUP.md](ZERO_SETUP.md)**
 
@@ -116,7 +116,7 @@ J-NIS compliance = `action_decisions` present + `decision_made: false` + trace r
 
 That's it. No certification. No approval process. No integration fee.
 
-**If your system produces `action_decisions` with `decision_made: false`, you are already J-NIS compliant.**
+**A system that produces `action_decisions` with `decision_made: false` satisfies J-NIS compliance.**
 
 Verify:
 ```bash
@@ -160,10 +160,10 @@ J-NIS makes non-interference a structural property — not a convention. See [WH
 
 ## No Adoption Barrier
 
-You do not need permission to use J-NIS.
+J-NIS is an open standard and requires no permission for use.
 
 - No registration
-- No approval
+- No approval process
 - No dependency installation
 - No system redesign
 

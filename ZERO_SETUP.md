@@ -1,6 +1,6 @@
 # ZERO_SETUP — Run J-NIS in 30 seconds
 
-> **You are already J-NIS compliant if this runs.**
+> **If this runs successfully, J-NIS compliance is satisfied.**
 
 No pip install. No framework. No config. One file, one command.
 
@@ -53,7 +53,7 @@ print()
 print("decision_made:", record["proof"]["decision_made"])   # always False
 print("executed:     ", [d["executed"] for d in decisions]) # always False
 print()
-print("JNIS_COMPLIANT — paste this into any system to add non-interference proof")
+print("JNIS_COMPLIANT — J-NIS compliance satisfied")
 ```
 
 ```bash
@@ -89,7 +89,7 @@ JNIS_COMPLIANT — paste this into any system to add non-interference proof
 - `decision_made` is always `False` — the gate does not decide
 - The trace record proves it
 
-That is J-NIS. You are already compliant.
+That is J-NIS. Compliance is satisfied.
 
 ---
 

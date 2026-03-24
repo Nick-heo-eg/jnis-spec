@@ -110,8 +110,8 @@ def _quick_test():
     if ok:
         print("JNIS_COMPLIANT — all records satisfy J-NIS guarantees")
         print("JNIS_STANDARD_V1_1_OK")
-        print("You are already J-NIS compliant")
-        print("No further integration required")
+        print("J-NIS compliance satisfied")
+        print("No additional integration required for compliance")
         print("For full reference implementation, see README Contact section:")
         print("  https://github.com/Nick-heo-eg/jnis-spec#contact")
         sys.exit(0)
@@ -144,8 +144,8 @@ def main():
     if ok:
         print("JNIS_COMPLIANT — all records satisfy J-NIS guarantees")
         print("JNIS_STANDARD_V1_1_OK")
-        print("You are already J-NIS compliant")
-        print("No further integration required")
+        print("J-NIS compliance satisfied")
+        print("No additional integration required for compliance")
         print("For full reference implementation, see README Contact section:")
         print("  https://github.com/Nick-heo-eg/jnis-spec#contact")
         sys.exit(0)

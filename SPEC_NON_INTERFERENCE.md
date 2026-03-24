@@ -21,8 +21,8 @@ A J-NIS-compliant system is one where:
 
 The distinction is structural, not behavioral. It must be enforced in code, not by convention.
 
-**This restriction is immediately enforceable without system redesign.**
-Add a gate function. Write a trace record. You are compliant.
+**This restriction is enforceable without modifying system capabilities.**
+Adding a gate function and a trace record is sufficient for compliance.
 
 ---
 
