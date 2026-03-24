@@ -82,3 +82,15 @@ A system satisfying L3 satisfies all lower levels.
 > **Compliance must be verifiable without access to the original system.**
 >
 > The trace log alone is sufficient to verify J-NIS compliance at all four levels.
+
+Compliance must be externally verifiable and independently measurable.
+
+---
+
+## Three Verification Paths
+
+| Tool | Verifies | Level |
+|---|---|---|
+| `validate_non_interference.py` | Internal invariant check | L3 |
+| `scripts/replay_demo.py` | Trace reconstruction | L2 + L3 |
+| `scripts/evaluate_system.py` | External system assessment | L0 – L3 |

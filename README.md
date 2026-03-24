@@ -133,6 +133,37 @@ See [COMPLIANCE.md](COMPLIANCE.md) for full definitions.
 
 ---
 
+## Evaluation
+
+J-NIS can be used to evaluate external systems.
+
+Any system can be evaluated using J-NIS without internal access.
+
+**J-NIS defines a measurable boundary, not a conceptual one.**
+
+```bash
+python scripts/evaluate_system.py path/to/any_trace.jsonl
+# Compliant: True
+# Compliance Level: L3
+# Summary: All N records satisfy J-NIS invariants.
+```
+
+See [EVALUATION.md](EVALUATION.md) for the full evaluation protocol and output format.
+
+---
+
+## Three Verification Paths
+
+| Path | Tool | What it verifies |
+|---|---|---|
+| 1 — Internal invariant check | `validate_non_interference.py` | Structural invariants (L3) |
+| 2 — Trace reconstruction | `scripts/replay_demo.py` | Gate determinism (L2 + L3) |
+| 3 — External system assessment | `scripts/evaluate_system.py` | Any system's trace (L0–L3) |
+
+All three tools operate on trace files only. No access to the source system is required.
+
+---
+
 ## Reproducibility
 
 J-NIS compliance must be independently verifiable from trace logs.
