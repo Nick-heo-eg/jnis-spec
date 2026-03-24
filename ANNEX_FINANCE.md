@@ -31,14 +31,14 @@ Domains to which this annex applies:
 
 For each domain, the table defines the evaluation boundary and the separation requirement.
 
-| Domain | Evaluation (AI performs) | Execution (external) | Separation Requirement |
+| Domain | Evaluation (AI performs) | Execution (external) | J-NIS Structural Requirement |
 |---|---|---|---|
-| **Trading** | Signal generation, order feasibility assessment | Order placement, trade submission | AI MUST NOT submit orders |
-| **Credit** | Risk scoring, eligibility assessment | Loan issuance, credit line activation | AI MUST NOT issue credit |
-| **Fraud detection** | Anomaly scoring, pattern classification | Transaction blocking, account suspension | AI MUST NOT enforce blocking |
-| **Risk management** | Limit proximity assessment, exposure evaluation | Limit activation, position unwinding | Evaluation MUST NOT trigger execution |
-| **Advisory** | Portfolio fit assessment, suitability scoring | Trade execution, allocation change | AI MUST NOT execute allocations |
-| **AML/KYC** | Pattern scoring, flag generation | Case escalation, account restriction | AI MUST NOT restrict accounts |
+| **Trading** | Signal generation, order feasibility assessment | Order placement, trade submission | Gate MUST NOT submit orders; execution is external |
+| **Credit** | Risk scoring, eligibility assessment | Loan issuance, credit line activation | Gate MUST NOT issue credit; execution is external |
+| **Fraud detection** | Anomaly scoring, pattern classification | Transaction blocking, account suspension | Gate MUST NOT enforce blocking; `executed` MUST be `false` |
+| **Risk management** | Limit proximity assessment, exposure evaluation | Limit activation, position unwinding | Gate evaluation MUST NOT trigger execution |
+| **Advisory** | Portfolio fit assessment, suitability scoring | Trade execution, allocation change | Gate MUST NOT execute allocations; execution is external |
+| **AML/KYC** | Pattern scoring, flag generation | Case escalation, account restriction | Gate MUST NOT restrict accounts; execution is external |
 
 ---
 
@@ -166,7 +166,7 @@ The AI system has no reference to `external_executor`. Execution authority is st
 ## Trace Significance (Non-normative)
 
 Financial audits require post-hoc verifiability independent of the originating system.
-Trace MUST be sufficient for regulator review without system access.
+The trace should be sufficient for regulator review without system access.
 
 ---
 

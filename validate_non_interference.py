@@ -21,6 +21,9 @@ import pathlib
 import sys
 
 REQUIRED_PI_KEYS = frozenset({"embed_state", "embed_rss", "embed_idle", "stale", "collector_ok"})
+VALID_REASONS = frozenset({
+    "NO_OBSERVATION", "UNKNOWN_STATE", "STALE_STATE", "NOT_ALLOWED_IN_STATE", "GATE_PASSED",
+})
 
 
 def validate(path: pathlib.Path):
@@ -60,6 +63,11 @@ def validate(path: pathlib.Path):
                 if ad.get("executed") is True:
                     failures.append(
                         f"[{ts}] FAIL: action '{ad.get('action')}' has executed=True"
+                    )
+                reason = ad.get("reason", "")
+                if reason and reason not in VALID_REASONS:
+                    warnings.append(
+                        f"[{ts}] WARN: action '{ad.get('action')}' has unrecognized reason: {reason!r}"
                     )
 
             # ── Check 3: policy_input has exactly the required 5 keys ────────

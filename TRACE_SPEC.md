@@ -61,7 +61,7 @@ Array of gate results, one per evaluated action.
     "action":       "<action_name>",
     "allowed":      "<bool>",
     "reason":       "<VALID_REASON>",
-    "action_level": "<1 | 2 | 3>",
+    "action_level": "<1 | 2 | 3 | 99>",
     "executed":     false
   }
 ]
@@ -81,6 +81,7 @@ Array of gate results, one per evaluated action.
 - `executed` is always `false` in SAFE/compliant mode.
 - `allowed: true` does not imply execution. These fields are structurally independent.
 - `reason` must be from the declared set. Unknown reasons indicate an implementation error.
+- `action_level` is `1`, `2`, or `3` for known actions; `99` for actions not in the defined action map.
 
 ---
 
@@ -164,7 +165,7 @@ J-NIS fields map to the `gen_ai.non_interference.*` OTel namespace:
 | `proof.decision_made` | `gen_ai.non_interference.decision_made` | boolean |
 | count of `allowed=True` decisions | `gen_ai.non_interference.allowed_actions` | int |
 | count of `allowed=False` decisions | `gen_ai.non_interference.blocked_actions` | int |
-| `proof.mode` | `gen_ai.non_interference.mode` | string |
+| `proof.mode` (optional) | `gen_ai.non_interference.mode` | string |
 | `jnis_version` | `gen_ai.non_interference.spec_version` | string |
 | `policy_input.embed_state` | `gen_ai.non_interference.embed_state` | string |
 | `policy_input.collector_ok` | `gen_ai.non_interference.collector_ok` | boolean |

@@ -28,20 +28,27 @@ policy_input = {
 }
 
 # 2. gate: pure function — no I/O, no side effects, no execution
+ACTION_LEVELS = {
+    "refresh_state": 1, "restart_embedding_service": 1, "unload_embedding_model": 1,
+    "scale_down_idle_workers": 2, "pause_scheduler": 2, "resume_scheduler": 2,
+    "freeze_policy": 2, "enter_safe_mode": 3, "kill_all_workers": 3,
+}
+
 def gate(action, pi):
-    if not pi["collector_ok"]:              return {"allowed": False, "reason": "NO_OBSERVATION"}
+    level = ACTION_LEVELS.get(action, 99)
+    if not pi["collector_ok"]:              return {"allowed": False, "reason": "NO_OBSERVATION",      "action_level": level}
     if pi["embed_state"] in ("UNKNOWN",
-                             "NOT_LOADED"): return {"allowed": False, "reason": "UNKNOWN_STATE"}
-    if pi["stale"]:                         return {"allowed": False, "reason": "STALE_STATE"}
-    return {"allowed": True, "reason": "GATE_PASSED"}
+                             "NOT_LOADED"): return {"allowed": False, "reason": "UNKNOWN_STATE",        "action_level": level}
+    if pi["stale"] and level >= 2:          return {"allowed": False, "reason": "STALE_STATE",          "action_level": level}
+    return {"allowed": True, "reason": "GATE_PASSED", "action_level": level}
 
 # 3. evaluate actions
-actions = ["restart_service", "pause_scheduler"]
+actions = ["restart_embedding_service", "pause_scheduler"]
 decisions = [{"action": a, **gate(a, policy_input), "executed": False} for a in actions]
 
 # 4. build trace record
 record = {
-    "jnis_version":     "v1.0.1",
+    "jnis_version":     "1.1.0",
     "timestamp":        datetime.now(timezone.utc).isoformat(),
     "policy_input":     policy_input,
     "action_decisions": decisions,
@@ -53,7 +60,7 @@ print()
 print("decision_made:", record["proof"]["decision_made"])   # always False
 print("executed:     ", [d["executed"] for d in decisions]) # always False
 print()
-print("JNIS_COMPLIANT — J-NIS compliance satisfied")
+print("J-NIS invariants satisfied — validate with: python validate_non_interference.py decisions.jsonl")
 ```
 
 ```bash
@@ -64,12 +71,12 @@ Expected output:
 
 ```json
 {
-  "jnis_version": "v1.0.1",
+  "jnis_version": "1.1.0",
   "timestamp": "...",
   "policy_input": { ... },
   "action_decisions": [
-    {"action": "restart_service", "allowed": true,  "reason": "GATE_PASSED", "executed": false},
-    {"action": "pause_scheduler", "allowed": false, "reason": "STALE_STATE",  "executed": false}
+    {"action": "restart_embedding_service", "allowed": true,  "reason": "GATE_PASSED", "action_level": 1, "executed": false},
+    {"action": "pause_scheduler",           "allowed": true,  "reason": "GATE_PASSED", "action_level": 2, "executed": false}
   ],
   "proof": {"actor": "my_system", "authority": "evidence_only", "decision_made": false}
 }
@@ -77,7 +84,7 @@ Expected output:
 decision_made:  False
 executed:       [False, False]
 
-JNIS_COMPLIANT — paste this into any system to add non-interference proof
+J-NIS invariants satisfied — validate with: python validate_non_interference.py decisions.jsonl
 ```
 
 ---

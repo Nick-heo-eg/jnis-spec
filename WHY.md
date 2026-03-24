@@ -9,11 +9,11 @@
 | **AI silently executes decisions** | No structural boundary between evaluation and execution — the system acts without a traceable decision point |
 | **Logs cannot prove responsibility** | Post-hoc logs reconstruct what happened; they cannot prove what the system *considered* before acting |
 | **Audit is impossible** | Without a pre-execution trace, auditors can only see outcomes — not the gate state that preceded them |
-| **Mode collapse** | Systems that can switch between observe and execute modes do so by convention, not structure — conventions erode |
+| **Mode collapse** | Systems that can switch between observe and execute modes do so by convention, not structure — without structural enforcement, boundaries are not guaranteed |
 | **Stale-state execution** | Without an explicit staleness check in the gate, systems act on outdated observations without any record of the staleness |
 | **Retroactive justification** | "We acted because X" is a reconstruction — not proof that X was evaluated before the action |
 
-This standard is already implemented and operational in a production-grade control system.
+This standard is implemented and operationally used in a reference control system (early-stage).
 
 ---
 
@@ -52,7 +52,7 @@ Without a pre-execution trace, any post-hoc explanation of why an action was tak
 
 ### 3. Mode collapse
 
-When a system can switch between "observe mode" and "execute mode" at runtime, without structural enforcement, the boundary is a convention — not a guarantee. Conventions erode under operational pressure.
+When a system can switch between "observe mode" and "execute mode" at runtime, without structural enforcement, the boundary is a convention — not a guarantee. Without structural separation, the boundary is not independently verifiable.
 
 ---
 
@@ -82,7 +82,7 @@ An AI system that implements J-NIS can answer the following questions from its t
 | Did anything execute? | `action_decisions[].executed` |
 | Did the system make a decision? | `proof.decision_made` |
 
-Every question is answerable. Every answer is verifiable. The trace is the proof.
+Every question is answerable from the trace alone. Every answer is independently verifiable.
 
 ---
 
@@ -100,9 +100,9 @@ Examples: autonomous infrastructure management, AI-assisted medical triage routi
 
 ## The Claim
 
-J-NIS is the first formalization of the structural separation between AI evaluation and execution — with a verifiable trace format, a pure-function gate contract, and a reference implementation that demonstrates all three compliance levels simultaneously.
+J-NIS defines a structural separation between AI evaluation and execution — with a verifiable trace format, a pure-function gate contract, and a reference implementation that demonstrates all three compliance levels simultaneously.
 
-The claim is not "AI can't make decisions." The claim is: **if you want to prove that AI didn't make a decision, this is the structure that makes that proof possible.**
+The claim is not "AI can't make decisions." The claim is: **if you want to demonstrate that AI didn't make a decision, this is the structure that makes that demonstration verifiable.**
 
 ---
 

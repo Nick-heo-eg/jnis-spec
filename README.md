@@ -48,8 +48,8 @@ If your system outputs `decision_made: false`, it satisfies J-NIS compliance.
 
 ---
 
-**Without J-NIS:** implicit decisions, no proof of non-interference.
-**With J-NIS:** provable non-interference, verifiable trace, structural separation.
+**Without J-NIS:** implicit decisions, no verifiable boundary between evaluation and execution.
+**With J-NIS:** structural separation, verifiable trace, independently checkable invariants.
 
 ---
 

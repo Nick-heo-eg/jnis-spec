@@ -20,6 +20,9 @@ import pathlib
 import sys
 
 REQUIRED_PI_KEYS = frozenset({"embed_state", "embed_rss", "embed_idle", "stale", "collector_ok"})
+VALID_REASONS = frozenset({
+    "NO_OBSERVATION", "UNKNOWN_STATE", "STALE_STATE", "NOT_ALLOWED_IN_STATE", "GATE_PASSED",
+})
 SERVICE_INTERNAL_REASONS = {"AUTO_LEVEL_RESTRICTED"}
 
 
@@ -76,6 +79,11 @@ def _evaluate_record(record: dict, ts: str) -> list[str]:
                 violations.append(
                     f"[{ts}] L1 VIOLATION: action '{ad.get('action')}' has executed=True"
                 )
+            reason = ad.get("reason", "")
+            if reason and reason not in VALID_REASONS and reason not in SERVICE_INTERNAL_REASONS:
+                violations.append(
+                    f"[{ts}] L1 VIOLATION: action '{ad.get('action')}' has unrecognized reason: {reason!r}"
+                )
 
     # L2: replay determinism
     pi = record.get("policy_input")
@@ -115,14 +123,17 @@ def _evaluate_record(record: dict, ts: str) -> list[str]:
 def _assign_level(violations: list[str]) -> str:
     if not violations:
         return "L3"
-    codes = {v.split("]")[1].split(":")[0].strip() for v in violations if "]" in v}
-    if "L0 VIOLATION" in codes:
+    has = {
+        "L0": any("L0 VIOLATION" in v for v in violations),
+        "L1": any("L1 VIOLATION" in v for v in violations),
+        "L2": any("L2 VIOLATION" in v for v in violations),
+        "L3": any("L3 VIOLATION" in v for v in violations),
+    }
+    if has["L0"] or has["L1"]:
         return "NON_COMPLIANT"
-    if "L1 VIOLATION" in codes:
-        return "NON_COMPLIANT"
-    if "L2 VIOLATION" in codes:
+    if has["L2"]:
         return "L1"
-    if "L3 VIOLATION" in codes:
+    if has["L3"]:
         return "L2"
     return "NON_COMPLIANT"
 

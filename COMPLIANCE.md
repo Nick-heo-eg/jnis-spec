@@ -23,14 +23,14 @@ This is the minimum assertion. It states that the system did not make a decision
 
 ### Level 1 — Gate Evaluation Recorded
 
-**Requirement:** `action_decisions` is present and non-empty, with `allowed`, `reason`, and `executed` fields per entry.
+**Requirement:** `action_decisions` is present and non-empty, with `action`, `allowed`, `reason`, `action_level`, and `executed` fields per entry.
 
 This confirms that the gate was evaluated and its result was recorded before any execution occurred.
 
 ```json
 {
   "action_decisions": [
-    { "action": "restart_service", "allowed": true, "reason": "GATE_PASSED", "executed": false }
+    { "action": "restart_embedding_service", "allowed": true, "reason": "GATE_PASSED", "action_level": 1, "executed": false }
   ]
 }
 ```

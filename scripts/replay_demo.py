@@ -19,7 +19,9 @@ import pathlib
 import sys
 
 REQUIRED_PI_KEYS = frozenset({"embed_state", "embed_rss", "embed_idle", "stale", "collector_ok"})
-
+VALID_REASONS = frozenset({
+    "NO_OBSERVATION", "UNKNOWN_STATE", "STALE_STATE", "NOT_ALLOWED_IN_STATE", "GATE_PASSED",
+})
 SERVICE_INTERNAL_REASONS = {"AUTO_LEVEL_RESTRICTED"}
 
 
@@ -73,6 +75,9 @@ def _check_invariants(record: dict, ts: str) -> list[str]:
     for ad in record.get("action_decisions", []):
         if ad.get("executed") is True:
             failures.append(f"[{ts}] L3 FAIL: action '{ad.get('action')}' has executed=True")
+        reason = ad.get("reason", "")
+        if reason and reason not in VALID_REASONS and reason not in SERVICE_INTERNAL_REASONS:
+            failures.append(f"[{ts}] L3 FAIL: action '{ad.get('action')}' has unrecognized reason: {reason!r}")
 
     pi = record.get("policy_input")
     if pi is None:

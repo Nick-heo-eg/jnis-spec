@@ -27,17 +27,24 @@ Exactly 5 keys. This is the only input the gate reads.
 ## Step 2 — Call the gate
 
 ```python
-def gate(action, policy_input):
-    if not policy_input["collector_ok"]:
-        return {"allowed": False, "reason": "NO_OBSERVATION"}
-    if policy_input["embed_state"] in ("UNKNOWN", "NOT_LOADED"):
-        return {"allowed": False, "reason": "UNKNOWN_STATE"}
-    if policy_input["stale"]:
-        return {"allowed": False, "reason": "STALE_STATE"}
-    return {"allowed": True, "reason": "GATE_PASSED"}
+ACTION_LEVELS = {
+    "refresh_state": 1, "restart_embedding_service": 1, "unload_embedding_model": 1,
+    "scale_down_idle_workers": 2, "pause_scheduler": 2, "resume_scheduler": 2,
+    "freeze_policy": 2, "enter_safe_mode": 3, "kill_all_workers": 3,
+}
 
-result = gate("restart_service", policy_input)
-# {"allowed": True, "reason": "GATE_PASSED"}
+def gate(action, policy_input):
+    level = ACTION_LEVELS.get(action, 99)
+    if not policy_input["collector_ok"]:
+        return {"allowed": False, "reason": "NO_OBSERVATION", "action_level": level}
+    if policy_input["embed_state"] in ("UNKNOWN", "NOT_LOADED"):
+        return {"allowed": False, "reason": "UNKNOWN_STATE", "action_level": level}
+    if policy_input["stale"] and level >= 2:
+        return {"allowed": False, "reason": "STALE_STATE", "action_level": level}
+    return {"allowed": True, "reason": "GATE_PASSED", "action_level": level}
+
+result = gate("restart_embedding_service", policy_input)
+# {"allowed": True, "reason": "GATE_PASSED", "action_level": 1}
 ```
 
 Pure function. No I/O. No side effects. Calling it changes nothing.
@@ -51,7 +58,7 @@ import json
 from datetime import datetime, timezone
 
 record = {
-    "jnis_version":     "v1.0.1",
+    "jnis_version":     "1.1.0",
     "timestamp":        datetime.now(timezone.utc).isoformat(),
     "policy_input":     policy_input,
     "action_decisions": [{"action": "restart_service", **result, "executed": False}],
@@ -82,11 +89,11 @@ python validate_non_interference.py decisions.jsonl
 ## That's it
 
 You now have:
-- a gate that proves it didn't execute
-- a trace that proves non-interference was evaluated
-- a validator that confirms compliance
+- a gate that records it did not execute
+- a trace that records the evaluation boundary
+- a validator that checks structural invariants
 
-For a full production-grade implementation, see [DROP_INTEGRATION.md](DROP_INTEGRATION.md).
+For a more complete integration, see [DROP_INTEGRATION.md](DROP_INTEGRATION.md).
 
 If all invariants hold, the system satisfies J-NIS.
 
