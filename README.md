@@ -46,4 +46,15 @@ See [TODO_PROOF.md](TODO_PROOF.md) for the current proof validation checklist.
 
 `JNIS_VERSION: 1.1.0` · `Status: Frozen for proof validation`
 
+---
+
+## Execution control layers
+
+Execution is restricted at two layers:
+
+1. **CLI-level permission controls** (Claude Code settings) — the AI cannot attempt `git commit` or `git push`
+2. **Repository-level enforcement** via J-NIS hooks and trace validation — commit is blocked without a valid trace, regardless of who attempts it
+
+This ensures both prevention and verifiable non-interference.
+
 Hooks are repository-scoped (no global hooks are used)
