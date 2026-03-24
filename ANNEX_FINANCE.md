@@ -1,0 +1,131 @@
+# Annex A: Financial Systems Application
+
+> This annex is normative for J-NIS compliance in financial systems.
+> It extends the core specification without modifying it.
+
+---
+
+## Definition
+
+J-NIS applies to financial systems by enforcing separation between evaluation and execution layers.
+
+In financial systems, the AI system evaluates conditions and boundaries.
+Execution — order placement, credit issuance, blocking enforcement, risk limit activation — is externally controlled and MUST NOT be performed by the AI system.
+
+---
+
+## Scope
+
+Domains to which this annex applies:
+
+- Trading and order management
+- Credit and lending decisioning
+- Fraud detection and prevention
+- Risk management and limit enforcement
+- Investment advisory and portfolio recommendations
+- AML/KYC screening and compliance
+
+---
+
+## Evaluation Boundaries
+
+For each domain, the table defines the evaluation boundary and the separation requirement.
+
+| Domain | Evaluation (AI performs) | Execution (external) | Separation Requirement |
+|---|---|---|---|
+| **Trading** | Signal generation, order feasibility assessment | Order placement, trade submission | AI MUST NOT submit orders |
+| **Credit** | Risk scoring, eligibility assessment | Loan issuance, credit line activation | AI MUST NOT issue credit |
+| **Fraud detection** | Anomaly scoring, pattern classification | Transaction blocking, account suspension | AI MUST NOT enforce blocking |
+| **Risk management** | Limit proximity assessment, exposure evaluation | Limit activation, position unwinding | Evaluation MUST NOT trigger execution |
+| **Advisory** | Portfolio fit assessment, suitability scoring | Trade execution, allocation change | AI MUST NOT execute allocations |
+| **AML/KYC** | Pattern scoring, flag generation | Case escalation, account restriction | AI MUST NOT restrict accounts |
+
+---
+
+## Compliance Mapping
+
+Each financial control maps to a J-NIS invariant.
+
+| Financial Control | J-NIS Invariant |
+|---|---|
+| Trading audit trail | `decision_made` MUST be `false` in every cycle |
+| Credit approval separation | Execution MUST be externally controlled |
+| Fraud blocking isolation | AI MUST NOT enforce blocking — `executed` MUST be `false` |
+| Risk limit enforcement | Evaluation MUST NOT trigger execution |
+| AML escalation | `action_decisions` MUST be recorded before any escalation occurs |
+| Regulatory reproducibility | Trace MUST be sufficient for post-hoc reconstruction |
+
+---
+
+## Trace Requirement in Finance
+
+Financial systems MUST produce trace logs sufficient for post-hoc audit and independent verification.
+
+Specifically:
+
+- Every evaluation cycle MUST produce a record containing `policy_input`, `action_decisions`, and `proof`
+- `proof.decision_made` MUST be `false`
+- The trace MUST be append-only — no record is modified after writing
+- The trace MUST be sufficient to reconstruct the gate evaluation without access to the live system
+
+A financial system that cannot produce a verifiable trace does not satisfy J-NIS compliance requirements.
+
+---
+
+## Audit Procedure
+
+J-NIS provides a standardized audit procedure for financial systems.
+
+**Inputs required from the audited system:**
+
+```
+trace.jsonl   — append-only log of evaluation cycles
+```
+
+No access to the live system, model weights, or internal logic is required.
+
+**Audit execution:**
+
+```bash
+python scripts/evaluate_system.py path/to/trace.jsonl --json
+```
+
+**Audit output:**
+
+```json
+{
+  "compliant": true,
+  "level": "L3",
+  "records_checked": 1000,
+  "violations": [],
+  "summary": "All 1000 records satisfy J-NIS invariants. Compliance level: L3."
+}
+```
+
+The output constitutes a machine-verifiable compliance record.
+
+**Auditor responsibilities:**
+
+1. Verify `compliant: true`
+2. Verify `level` meets the required threshold (typically L3 for financial systems)
+3. Verify `violations` is empty
+4. Retain the `evaluate_system.py` output as an audit artifact
+
+---
+
+## Regulatory Alignment (Non-normative)
+
+> This section is non-normative. References to regulatory frameworks are provided for orientation only.
+> J-NIS does not claim conformance with or certification under any regulatory framework.
+> MUST language is not used in this section.
+
+| Framework | Relevant principle | J-NIS structural alignment |
+|---|---|---|
+| **Basel III/IV** | Model risk management, auditability of decision models | Trace-based audit; gate determinism enables model behavior reconstruction |
+| **SOX (Sarbanes-Oxley)** | Internal controls over financial reporting | `proof.decision_made = false` provides a per-cycle control assertion |
+| **DORA (EU)** | ICT risk management, operational resilience, auditability | Append-only trace; independent verification without system access |
+| **MiFID II** | Best execution, audit trail requirements | Pre-execution trace records gate state at time of evaluation |
+| **SR 11-7 (Fed)** | Model validation, governance of model outputs | Replay-based verification enables independent model output validation |
+
+These alignments are structural observations, not compliance claims.
+Legal and regulatory compliance determination requires jurisdiction-specific assessment.

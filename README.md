@@ -128,6 +128,18 @@ See the [Contact](#contact) section below.
 
 ---
 
+## Annexes
+
+Domain-specific annexes extend the core specification without modifying it.
+
+| Annex | Domain |
+|---|---|
+| [ANNEX_FINANCE.md](ANNEX_FINANCE.md) | Financial systems: trading, credit, fraud, risk, AML/KYC |
+
+Additional domain-specific annexes may be added. Each annex preserves the core MUST/MUST NOT invariants.
+
+---
+
 ## Compliance Levels
 
 | Level | Requirement | Verified by |

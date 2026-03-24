@@ -103,3 +103,6 @@ No access to the evaluated system is required. The trace is sufficient.
 | `validate_non_interference.py` | Internal invariant check (L3) | Your own system's trace |
 | `scripts/replay_demo.py` | Trace reconstruction (L2 + L3) | Determinism verification |
 | `scripts/evaluate_system.py` | External system assessment | Any system's trace |
+
+This protocol is domain-agnostic and applies to financial systems without modification.
+See [ANNEX_FINANCE.md](ANNEX_FINANCE.md) for domain-specific compliance mapping and audit procedure.
