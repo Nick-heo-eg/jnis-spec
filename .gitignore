@@ -1,2 +1,4 @@
 __pycache__/
 .claude/settings.local.json
+.execution_request
+logs/push_daemon.log

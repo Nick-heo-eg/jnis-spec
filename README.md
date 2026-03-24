@@ -57,4 +57,6 @@ Execution is restricted at two layers:
 
 This ensures both prevention and verifiable non-interference.
 
+All execution (commit/push) is restricted by permission layer and J-NIS enforcement layer. AI cannot execute actions and cannot bypass this constraint. Execution occurs only through validated system triggers.
+
 Hooks are repository-scoped (no global hooks are used)
