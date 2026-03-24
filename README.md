@@ -6,6 +6,15 @@ This draft is production-usable for non-interference enforcement.
 
 `[J-NIS Compliant]` · No dependencies · Open standard · No system redesign needed
 
+```
+Category:   AI Safety Standard
+Layer:      Decision Boundary & Non-Interference
+Type:       Constraint-based Specification
+Capability: Evaluation & Compliance Verification
+```
+
+Tags: `AI Safety` · `Governance` · `Decision Boundary` · `Compliance`
+
 ---
 
 ## Definition
@@ -271,6 +280,8 @@ If you need a production-grade implementation:
 - Or contact via profile: [github.com/Nick-heo-eg](https://github.com/Nick-heo-eg)
 
 A full reference implementation (Streamlit UI, deterministic replay, OTel trace) may be made available.
+
+For evaluation requests, use the **"Evaluation Request: External System"** issue template.
 
 ---
 
