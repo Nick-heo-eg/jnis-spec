@@ -2,6 +2,21 @@
 
 ---
 
+## What Breaks Without J-NIS
+
+| What breaks | Why |
+|---|---|
+| **AI silently executes decisions** | No structural boundary between evaluation and execution — the system acts without a traceable decision point |
+| **Logs cannot prove responsibility** | Post-hoc logs reconstruct what happened; they cannot prove what the system *considered* before acting |
+| **Audit is impossible** | Without a pre-execution trace, auditors can only see outcomes — not the gate state that preceded them |
+| **Mode collapse** | Systems that can switch between observe and execute modes do so by convention, not structure — conventions erode |
+| **Stale-state execution** | Without an explicit staleness check in the gate, systems act on outdated observations without any record of the staleness |
+| **Retroactive justification** | "We acted because X" is a reconstruction — not proof that X was evaluated before the action |
+
+This standard is already implemented and operational in a production-grade control system.
+
+---
+
 ## The Problem
 
 Today's AI-adjacent control systems have a structural flaw: **they collapse evaluation and execution into a single code path.**

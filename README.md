@@ -1,21 +1,38 @@
 # J-NIS (Judgment Non-Interference Standard)
 
-> **J-NIS defines how AI systems must NOT make decisions.**
+> **AI must not execute decisions, only evaluate boundaries.**
 
-J-NIS is a structural standard that separates **observation**, **evaluation**, and **execution** in AI-adjacent control systems. A system that implements J-NIS can prove — through its trace log — that it evaluated without deciding.
+`J-NIS compliant` · Reference implementation available (private)
 
 ---
 
 ## TL;DR
 
-AI systems should never execute decisions.
-They should only evaluate whether execution *would be* allowed.
+An AI system that implements J-NIS can prove — through its trace — that it evaluated without deciding.
 
 ```
 observe → evaluate → record
                   ↑
-             never execute
+          never execute
 ```
+
+Three structural rules:
+1. The gate is a pure function. It cannot execute anything.
+2. `decision_made` is always `false` in the trace.
+3. `allowed` and `executed` are always separate fields.
+
+---
+
+## Traditional AI vs J-NIS
+
+| | Traditional AI control | J-NIS compliant |
+|---|---|---|
+| Evaluation + execution | Same code path | Structurally separated |
+| Decision record | Post-hoc log (if any) | Pre-execution trace |
+| `decision_made` field | Not tracked | Always `false`, always present |
+| Gate function | Stateful, may trigger | Pure function, no side effects |
+| Audit trail | Reconstructed | Verifiable |
+| Non-interference proof | Convention | Structural guarantee |
 
 ---
 
@@ -23,52 +40,64 @@ observe → evaluate → record
 
 | Component | Role |
 |---|---|
-| `policy_input` | Fixed 5-key evidence snapshot. The only thing the gate reads. |
-| `action_gate` | Pure function. Returns `{allowed, reason}`. No side effects. |
-| `action_decisions` | List of gate results per action. `executed` is always separate from `allowed`. |
-| `proof` | Per-cycle machine-readable non-interference assertion. `decision_made: false`. |
+| `policy_input` | Fixed 5-key evidence snapshot. The only input to the gate. |
+| `action_gate` | Pure function → `{allowed, reason}`. No execution. |
+| `action_decisions` | Gate results per action. `allowed` and `executed` are always separate. |
+| `proof` | Per-cycle machine-readable assertion. `decision_made: false`. |
 
 ---
 
-## Why
+## Quickstart
 
-Modern AI systems implicitly make decisions. When an autonomous process acts on an evaluation, there is no structural boundary between "the system considered X" and "the system did X". This creates:
-
-- **Auditability gaps** — impossible to reconstruct what was evaluated vs. what was executed
-- **Responsibility ambiguity** — unclear whether the AI or the operator decided
-- **Governance failure** — no verifiable record that non-interference was maintained
-
-J-NIS solves this by enforcing explicit structural separation. See [WHY.md](WHY.md) for the full argument.
+See [QUICKSTART.md](QUICKSTART.md) — implement J-NIS in 10 lines of code.
 
 ---
 
-## Usage
+## Validate compliance
 
-See [DROP_INTEGRATION.md](DROP_INTEGRATION.md) — add J-NIS to an existing system in 3 steps.
-
----
-
-## Trace Format
-
-See [TRACE_SPEC.md](TRACE_SPEC.md) — every J-NIS cycle produces a verifiable trace record.
+```bash
+python validate_non_interference.py decisions.jsonl
+# Records checked: N
+# OK — all records satisfy J-NIS guarantees
+```
 
 ---
 
-## Specification
+## Documentation
 
-See [SPEC_NON_INTERFERENCE.md](SPEC_NON_INTERFERENCE.md) — the five principles and required fields.
+| Document | Purpose |
+|---|---|
+| [SPEC_NON_INTERFERENCE.md](SPEC_NON_INTERFERENCE.md) | The five principles, gate contract, compliance levels |
+| [TRACE_SPEC.md](TRACE_SPEC.md) | Trace field definitions, constraints, OTel mapping |
+| [DROP_INTEGRATION.md](DROP_INTEGRATION.md) | 3-step guide: add J-NIS to any existing system |
+| [WHY.md](WHY.md) | Why implicit AI decisions fail at scale |
+| [QUICKSTART.md](QUICKSTART.md) | Minimal 10-line implementation |
 
 ---
 
 ## Reference Implementation
 
-**[echo-control-tower](https://github.com/Nick-heo-eg/echo-control-tower)** — a complete J-NIS implementation with Streamlit UI, gate evaluator, and append-only trace log.
+A full reference implementation exists:
 
-```bash
-git clone https://github.com/Nick-heo-eg/echo-control-tower
-python scripts/health_check.py
-python scripts/validate_non_interference.py
-```
+- **echo-control-tower** (private repository)
+
+This implementation demonstrates:
+- action gating with a pure-function gate
+- deterministic trace with per-cycle `proof` block
+- non-interference proof via `validate_non_interference.py`
+- Streamlit UI for real-time observation
+
+This standard is already implemented and operational in a production-grade control system.
+
+Access may be provided upon request.
+
+---
+
+## Why This Matters
+
+When an AI system evaluates and executes in the same code path, there is no structural boundary between "the system considered X" and "the system did X." Responsibility becomes ambiguous. Audits reconstruct rather than verify.
+
+J-NIS makes non-interference a structural property — not a convention. See [WHY.md](WHY.md) for the full argument.
 
 ---
 
