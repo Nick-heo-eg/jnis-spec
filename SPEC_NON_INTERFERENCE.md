@@ -83,6 +83,19 @@ Every J-NIS trace record must contain:
 
 ---
 
+## Requirements
+
+The following constraints MUST be satisfied for J-NIS compliance:
+
+- `decision_made` **MUST** be `false` in every trace record
+- `action_decisions` **MUST** be recorded before any execution occurs
+- Execution **MUST NOT** be performed by the AI system — it is externally controlled
+- Trace **MUST** be reproducible: re-running the gate on stored `policy_input` yields the same result
+
+Violation of any requirement constitutes non-compliance.
+
+---
+
 ## The Gate Contract
 
 The gate function must satisfy:

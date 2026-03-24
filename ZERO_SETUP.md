@@ -98,3 +98,5 @@ That is J-NIS. Compliance is satisfied.
 - Save the output to `decisions.jsonl` and run `python validate_non_interference.py decisions.jsonl`
 - See [QUICKSTART.md](QUICKSTART.md) to add persistence
 - See [DROP_INTEGRATION.md](DROP_INTEGRATION.md) to integrate into an existing system
+
+This demonstration verifies invariant satisfaction.

@@ -8,6 +8,14 @@ This draft is production-usable for non-interference enforcement.
 
 ---
 
+## Definition
+
+J-NIS defines a constraint-based boundary for AI systems where decision authority is explicitly excluded.
+
+This standard separates evaluation from execution and enforces non-interference.
+
+---
+
 ## TL;DR
 
 An AI system that implements J-NIS can prove — through its trace — that it evaluated without deciding.
@@ -110,11 +118,24 @@ See the [Contact](#contact) section below.
 
 ---
 
+## Normative Statement
+
+An AI system is J-NIS compliant if:
+
+- `decision_made` is always `false`
+- `action_decisions` are explicitly recorded
+- execution is externally controlled
+- trace is reproducible
+
+J-NIS compliance is determined by invariant satisfaction, not system behavior.
+
+---
+
 ## Compliance Definition
 
 J-NIS compliance = `action_decisions` present + `decision_made: false` + trace reproducible.
 
-That's it. No certification. No approval process. No integration fee.
+No certification. No approval process. No integration fee.
 
 **A system that produces `action_decisions` with `decision_made: false` satisfies J-NIS compliance.**
 

@@ -114,6 +114,12 @@ Per-cycle non-interference assertion.
 | Ordering | Trace record is written before any execution |
 | Append-only | No record is modified or deleted after writing |
 
+### Normative Invariants (MUST)
+
+- `decision_made` **MUST** be `false` — decision authority is not present in the system
+- `allowed` and `executed` **MUST** be separate fields — gate result and execution are independent
+- Trace **MUST** be sufficient for replay verification — given stored `policy_input`, gate output is reproducible
+
 ---
 
 ## Replay Invariant

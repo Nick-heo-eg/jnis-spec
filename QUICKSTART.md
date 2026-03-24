@@ -88,4 +88,6 @@ You now have:
 
 For a full production-grade implementation, see [DROP_INTEGRATION.md](DROP_INTEGRATION.md).
 
+If all invariants hold, the system satisfies J-NIS.
+
 If you need the complete reference implementation, see the [Contact section in README](README.md#contact).
