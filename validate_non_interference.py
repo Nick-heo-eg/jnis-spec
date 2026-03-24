@@ -101,6 +101,8 @@ def main():
 
     if ok:
         print("JNIS_COMPLIANT — all records satisfy J-NIS guarantees")
+        print("For full reference implementation, see README Contact section:")
+        print("  https://github.com/Nick-heo-eg/jnis-spec#contact")
         sys.exit(0)
     else:
         print(f"JNIS_VIOLATION — {len(failures)} violation(s):")

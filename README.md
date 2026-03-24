@@ -62,6 +62,7 @@ python validate_non_interference.py decisions.jsonl
 ```
 
 After validation, you may request access to a full production-grade reference implementation.
+See the [Contact](#contact) section below.
 
 ---
 
@@ -89,9 +90,9 @@ This implementation demonstrates:
 - non-interference proof via `validate_non_interference.py`
 - Streamlit UI for real-time observation
 
-This standard is already implemented and operational in a production-grade control system.
+Early-stage reference implementation exists and is actively used internally.
 
-Access may be provided upon request.
+For access requests, open an issue with **"Request: J-NIS reference access"**
 
 ---
 
@@ -120,6 +121,17 @@ Compliance does not require the reference implementation. The spec and validator
 ## Adoption Path
 
 See [ADOPTION_FLOW.md](ADOPTION_FLOW.md) — the full 5-step loop from concept to production.
+
+---
+
+## Contact
+
+If you are interested in applying J-NIS to real systems:
+
+- [Open a GitHub issue](../../issues/new/choose) — use the **"Request: J-NIS reference access"** template
+- Or contact via profile: [github.com/Nick-heo-eg](https://github.com/Nick-heo-eg)
+
+Access to a production-grade reference implementation may be provided.
 
 ---
 

@@ -86,3 +86,5 @@ You now have:
 - a validator that confirms compliance
 
 For a full production-grade implementation, see [DROP_INTEGRATION.md](DROP_INTEGRATION.md).
+
+If you need the complete reference implementation, see the [Contact section in README](README.md#contact).
