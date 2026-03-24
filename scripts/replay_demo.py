@@ -154,7 +154,16 @@ def run(path: pathlib.Path):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
+    if len(sys.argv) >= 2 and sys.argv[1] == "--finance-sample":
+        _sample = pathlib.Path(__file__).parents[1] / "samples" / "finance_trace.jsonl"
+        if not _sample.exists():
+            print(f"Finance sample not found: {_sample}")
+            sys.exit(1)
+        print("Finance sample trace replay")
+        run(_sample)
+    elif len(sys.argv) < 2:
         print("Usage: python scripts/replay_demo.py <decisions.jsonl>")
+        print("       python scripts/replay_demo.py --finance-sample")
         sys.exit(1)
-    run(pathlib.Path(sys.argv[1]))
+    else:
+        run(pathlib.Path(sys.argv[1]))

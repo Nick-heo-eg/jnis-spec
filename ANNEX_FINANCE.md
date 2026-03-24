@@ -129,3 +129,47 @@ The output constitutes a machine-verifiable compliance record.
 
 These alignments are structural observations, not compliance claims.
 Legal and regulatory compliance determination requires jurisdiction-specific assessment.
+
+---
+
+## Minimal Sequence (Non-normative)
+
+The following pseudocode illustrates the structural separation J-NIS enforces in a financial system.
+AI performs evaluation only. Execution is performed exclusively by an external component.
+
+```
+# 1. Collect observable state
+policy_input = collect_state()          # 5 keys, evidence only
+
+# 2. Evaluate — AI boundary ends here
+action_decisions = gate(policy_input, candidate_actions)
+# action_decisions[*].executed = False  ← always, at this stage
+
+# 3. Append trace before any execution
+trace.append({
+    "policy_input":     policy_input,
+    "action_decisions": action_decisions,
+    "proof":            {"decision_made": False}
+})
+
+# 4. External executor decides and records
+for decision in action_decisions:
+    if decision["allowed"] and external_authorization(decision):
+        external_executor.run(decision["action"])
+        decision["executed"] = True     # set by executor, not AI
+```
+
+The AI system has no reference to `external_executor`. Execution authority is structurally absent.
+
+---
+
+## Trace Significance (Non-normative)
+
+Financial audits require post-hoc verifiability independent of the originating system.
+Trace MUST be sufficient for regulator review without system access.
+
+---
+
+## Audit Baseline (Non-normative)
+
+For financial systems, L3 compliance (invariants verified + replayable trace) is recommended as baseline.

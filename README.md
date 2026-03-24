@@ -136,6 +136,7 @@ Domain-specific annexes extend the core specification without modifying it.
 |---|---|
 | [ANNEX_FINANCE.md](ANNEX_FINANCE.md) | Financial systems: trading, credit, fraud, risk, AML/KYC |
 
+Annex A provides a domain-specific mapping for financial systems without altering core invariants.
 Additional domain-specific annexes may be added. Each annex preserves the core MUST/MUST NOT invariants.
 
 ---

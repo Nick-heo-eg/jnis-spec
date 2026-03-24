@@ -105,4 +105,5 @@ No access to the evaluated system is required. The trace is sufficient.
 | `scripts/evaluate_system.py` | External system assessment | Any system's trace |
 
 This protocol is domain-agnostic and applies to financial systems without modification.
+Financial traces MAY be evaluated without domain-specific extensions.
 See [ANNEX_FINANCE.md](ANNEX_FINANCE.md) for domain-specific compliance mapping and audit procedure.
