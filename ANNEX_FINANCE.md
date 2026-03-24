@@ -1,33 +1,36 @@
 # Annex A: Financial Systems Application
 
-> This annex is normative for J-NIS compliance in financial systems.
-> It extends the core specification without modifying it.
+> **This annex is a conceptual extension under validation and does not represent regulatory compliance, legal guidance, or production readiness.**
 >
-> Financial systems must satisfy both SPEC_NON_INTERFERENCE.md and this annex.
-> Non-financial systems need only satisfy the core specification.
+> This annex is exploratory. It illustrates how J-NIS structural patterns may apply in financial system contexts.
+> It is not a normative extension of the core specification and does not create compliance obligations.
+
+---
 
 ## Note on Language
 
-This annex uses descriptive and structural language rather than normative (MUST/SHOULD) statements.
-Normative requirements are defined in SPEC_NON_INTERFERENCE.md. This annex shows how those requirements apply in financial system contexts.
+This annex uses exploratory and descriptive language.
+Expressions such as *may*, *intended to*, *under validation*, and *experimental* reflect the current status of this mapping.
+Normative requirements are defined in SPEC_NON_INTERFERENCE.md only.
+This annex is an exploratory mapping, not a normative extension.
 
 ---
 
 ## Definition
 
-J-NIS applies to financial systems by requiring recorded separation between evaluation and execution layers.
+J-NIS may apply to financial systems by providing a structural pattern for separating evaluation from execution.
 
-In financial systems, the AI judgment layer records whether conditions and boundaries for an action are met.
-Execution — order placement, credit issuance, blocking enforcement, risk limit activation — is handled by an external component separate from the AI judgment layer.
-The trace records that the gate evaluated without executing.
+In financial systems, the AI judgment layer may record whether conditions and boundaries for an action are met.
+Execution — order placement, credit issuance, blocking enforcement, risk limit activation — is intended to be handled by an external component separate from the AI judgment layer.
+The trace is intended to record that the gate evaluated without executing.
 
-**Scope:** J-NIS verifies the recorded separation in the trace. Whether actual execution was externally controlled must be ensured by system architecture and is not verifiable from the trace alone.
+**Scope:** This annex describes structural patterns, not verified implementations. Actual separation of execution authority must be ensured by system architecture and is not verifiable from the trace alone.
 
 ---
 
 ## Scope
 
-Domains to which this annex applies:
+Domains to which this annex may apply (under validation):
 
 - Trading and order management
 - Credit and lending decisioning
@@ -38,72 +41,70 @@ Domains to which this annex applies:
 
 ---
 
-## Evaluation Boundaries
+## Evaluation Boundaries (Exploratory)
 
-For each domain, the table defines the evaluation boundary and the J-NIS structural expectation.
+This table illustrates how J-NIS structural patterns may map to financial domain boundaries. These mappings are under validation.
 
-| Domain | Evaluation (gate records) | Execution (external) | J-NIS Structural Expectation |
+| Domain | Evaluation (gate records) | Execution (external) | Intended Structural Pattern |
 |---|---|---|---|
-| **Trading** | Signal generation, order feasibility assessment | Order placement, trade submission | The AI judgment system has no capability to submit orders (`executed` remains `false`) |
-| **Credit** | Risk scoring, eligibility assessment | Loan issuance, credit line activation | The AI judgment system has no capability to issue credit (`executed` remains `false`) |
-| **Fraud detection** | Anomaly scoring, pattern classification | Transaction blocking, account suspension | The AI judgment system has no capability to enforce blocking (`executed` remains `false`) |
-| **Risk management** | Limit proximity assessment, exposure evaluation | Limit activation, position unwinding | The AI judgment system has no capability to trigger limit activation (`executed` remains `false`) |
-| **Advisory** | Portfolio fit assessment, suitability scoring | Trade execution, allocation change | The AI judgment system has no capability to execute allocations (`executed` remains `false`) |
-| **AML/KYC** | Pattern scoring, flag generation | Case escalation, account restriction | The AI judgment system has no capability to restrict accounts (`executed` remains `false`) |
+| **Trading** | Signal generation, order feasibility assessment | Order placement, trade submission | The AI judgment system is intended to have no capability to submit orders (`executed` may remain `false`) |
+| **Credit** | Risk scoring, eligibility assessment | Loan issuance, credit line activation | The AI judgment system is intended to have no capability to issue credit (`executed` may remain `false`) |
+| **Fraud detection** | Anomaly scoring, pattern classification | Transaction blocking, account suspension | The AI judgment system is intended to have no capability to enforce blocking (`executed` may remain `false`) |
+| **Risk management** | Limit proximity assessment, exposure evaluation | Limit activation, position unwinding | The AI judgment system is intended to have no capability to trigger limit activation (`executed` may remain `false`) |
+| **Advisory** | Portfolio fit assessment, suitability scoring | Trade execution, allocation change | The AI judgment system is intended to have no capability to execute allocations (`executed` may remain `false`) |
+| **AML/KYC** | Pattern scoring, flag generation | Case escalation, account restriction | The AI judgment system is intended to have no capability to restrict accounts (`executed` may remain `false`) |
 
 ---
 
-## Compliance Mapping
+## Compliance Mapping (Exploratory)
 
-Each financial control maps to a J-NIS structural expectation.
+This mapping illustrates how financial controls may align with J-NIS structural patterns. Under validation.
 
-| Financial Control | J-NIS Structural Expectation |
+| Financial Control | Intended J-NIS Pattern |
 |---|---|
-| Trading audit trail | `decision_made` is expected to remain `false` in every cycle |
-| Credit approval separation | `executed` is expected to remain `false` in gate records; execution is handled by an external component |
-| Fraud blocking isolation | `executed` is expected to remain `false`; blocking is not performed by the AI judgment layer |
-| Risk limit enforcement | Gate evaluation is not performed by the AI judgment layer; it does not trigger execution |
-| AML escalation | `action_decisions` are expected to be recorded before any escalation occurs |
-| Regulatory reproducibility | Trace is expected to be sufficient for post-hoc reconstruction of gate evaluation |
+| Trading audit trail | `decision_made` may remain `false` in every cycle |
+| Credit approval separation | `executed` may remain `false` in gate records; execution may be handled by an external component |
+| Fraud blocking isolation | `executed` may remain `false`; blocking is intended to be outside the AI judgment layer |
+| Risk limit enforcement | Gate evaluation is intended to be separate from execution; it does not trigger execution |
+| AML escalation | `action_decisions` may be recorded before any escalation occurs |
+| Regulatory reproducibility | Trace may be sufficient for post-hoc reconstruction of gate evaluation |
 
 ---
 
-## Trace Requirement in Finance
+## Trace Pattern in Finance (Exploratory)
 
-Financial systems are expected to produce trace logs sufficient for post-hoc audit and independent verification.
+Financial systems using J-NIS may produce trace logs intended for post-hoc review.
 
-Specifically:
+Intended pattern:
 
-- Every evaluation cycle is expected to produce a record containing `policy_input`, `action_decisions`, and `proof`
-- `proof.decision_made` is expected to remain `false`
-- The trace is expected to be append-only — no record is modified after writing
-- The trace is expected to be sufficient to reconstruct gate evaluation without access to the live system
+- Each evaluation cycle may produce a record containing `policy_input`, `action_decisions`, and `proof`
+- `proof.decision_made` may remain `false`
+- The trace is intended to be append-only
+- The trace is intended to be sufficient to reconstruct gate evaluation without access to the live system
 
-A financial system that cannot produce a verifiable trace may not be considered compliant under this annex.
+A financial system that cannot produce a verifiable trace may not be considered aligned with this annex.
 
-**Note:** A verifiable trace confirms that gate results were recorded with `executed: false`. It does not verify whether execution occurred outside the recorded fields. Architectural controls are expected to ensure actual execution separation.
+**Note:** A trace confirms that gate results were recorded with `executed: false`. It does not verify whether execution occurred outside the recorded fields. Architectural controls are intended to ensure actual execution separation.
 
 ---
 
-## Audit Procedure
+## Audit Pattern (Exploratory)
 
-J-NIS provides a standardized audit procedure for financial systems.
+This section illustrates a possible audit approach using J-NIS trace tooling. Under validation.
 
-**Inputs required from the audited system:**
+**Input:**
 
 ```
 trace.jsonl   — append-only log of evaluation cycles
 ```
 
-No access to the live system, model weights, or internal logic is required.
-
-**Audit execution:**
+**Execution:**
 
 ```bash
 python scripts/evaluate_system.py path/to/trace.jsonl --json
 ```
 
-**Audit output:**
+**Example output:**
 
 ```json
 {
@@ -115,43 +116,39 @@ python scripts/evaluate_system.py path/to/trace.jsonl --json
 }
 ```
 
-The output constitutes a machine-verifiable compliance record for the trace invariants.
+This output reflects trace invariant satisfaction only. It is not a regulatory audit result.
 
-**Auditor responsibilities:**
-
-1. Verify `compliant: true`
-2. Verify `level` meets the required threshold (L3 recommended for financial systems)
-   L3 is recommended as a practical baseline for financial audit scenarios
-3. Verify `violations` is empty
-4. Retain the `evaluate_system.py` output as an audit artifact
-5. Separately verify architectural controls for actual execution separation
+Suggested review steps:
+1. Check `compliant: true`
+2. Check `level` (L3 is intended as a practical baseline for financial contexts)
+3. Check `violations` is empty
+4. Separately verify architectural controls for actual execution separation
 
 ---
 
-## Regulatory Alignment (Non-normative)
+## Regulatory Alignment (Non-normative, Exploratory)
 
-> This section is non-normative. References to regulatory frameworks are provided for orientation only.
+> This section is non-normative and exploratory.
+> References to regulatory frameworks are provided for orientation only.
 > J-NIS does not claim conformance with or certification under any regulatory framework.
-> Normative language is not used in this section.
 
-| Framework | Relevant principle | J-NIS structural alignment |
+| Framework | Relevant principle | Possible J-NIS structural alignment |
 |---|---|---|
-| **Basel III/IV** | Model risk management, auditability of decision models | Trace-based record; gate determinism enables evaluation reconstruction |
-| **SOX (Sarbanes-Oxley)** | Internal controls over financial reporting | `proof.decision_made = false` provides a per-cycle recorded assertion |
+| **Basel III/IV** | Model risk management, auditability of decision models | Trace-based record; gate determinism may enable evaluation reconstruction |
+| **SOX (Sarbanes-Oxley)** | Internal controls over financial reporting | `proof.decision_made = false` may provide a per-cycle recorded assertion |
 | **DORA (EU)** | ICT risk management, operational resilience, auditability | Append-only trace; independent verification without system access |
-| **MiFID II** | Best execution, audit trail requirements | Pre-execution trace records gate state at time of evaluation |
-| **SR 11-7 (Fed)** | Model validation, governance of model outputs | Replay-based verification enables independent gate output validation |
+| **MiFID II** | Best execution, audit trail requirements | Pre-execution trace may record gate state at time of evaluation |
+| **SR 11-7 (Fed)** | Model validation, governance of model outputs | Replay-based verification may enable independent gate output validation |
 
-These alignments are structural observations, not compliance claims.
+These are structural observations under validation, not compliance claims.
 Legal and regulatory compliance determination requires jurisdiction-specific assessment.
 This annex does not replace any regulatory requirements; it only provides a structural pattern that may support auditability.
 
 ---
 
-## Minimal Sequence (Non-normative)
+## Minimal Sequence (Illustrative)
 
-The following pseudocode illustrates the structural separation J-NIS describes in a financial system.
-The gate records evaluation results. Execution is performed by an external component.
+The following pseudocode illustrates the structural pattern J-NIS describes. Under validation.
 
 ```
 # 1. Collect observable state
@@ -175,11 +172,5 @@ for decision in action_decisions:
         # executed=True recorded by executor in its own log, not by the gate
 ```
 
-The gate has no reference to `external_executor`. Execution authority is held by an external component.
-The AI judgment layer has no direct execution capability or reference to execution systems.
-
----
-
-## Audit Baseline (Non-normative)
-
-For financial systems, L3 compliance (invariants verified + replayable trace) is the recommended baseline.
+The gate has no reference to `external_executor`. Execution authority is intended to be held by an external component.
+The AI judgment layer is intended to have no direct execution capability or reference to execution systems.
