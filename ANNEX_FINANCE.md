@@ -12,8 +12,8 @@
 
 J-NIS applies to financial systems by requiring recorded separation between evaluation and execution layers.
 
-In financial systems, the AI system records whether conditions and boundaries for an action are met.
-Execution — order placement, credit issuance, blocking enforcement, risk limit activation — is externally controlled.
+In financial systems, the AI judgment layer records whether conditions and boundaries for an action are met.
+Execution — order placement, credit issuance, blocking enforcement, risk limit activation — must not be performed by the AI judgment layer itself; it is held by an external component.
 The trace records that the gate evaluated without executing.
 
 **Scope:** J-NIS verifies the recorded separation in the trace. Whether actual execution was externally controlled must be ensured by system architecture and is not verifiable from the trace alone.
@@ -37,14 +37,14 @@ Domains to which this annex applies:
 
 For each domain, the table defines the evaluation boundary and the J-NIS trace requirement.
 
-| Domain | Evaluation (gate records) | Execution (external) | J-NIS Trace Requirement |
+| Domain | Evaluation (gate records) | Execution (external) | J-NIS Structural Requirement |
 |---|---|---|---|
-| **Trading** | Signal generation, order feasibility assessment | Order placement, trade submission | Gate MUST NOT submit orders; `executed` MUST be `false` |
-| **Credit** | Risk scoring, eligibility assessment | Loan issuance, credit line activation | Gate MUST NOT issue credit; `executed` MUST be `false` |
-| **Fraud detection** | Anomaly scoring, pattern classification | Transaction blocking, account suspension | Gate MUST NOT enforce blocking; `executed` MUST be `false` |
-| **Risk management** | Limit proximity assessment, exposure evaluation | Limit activation, position unwinding | Gate evaluation MUST NOT trigger execution |
-| **Advisory** | Portfolio fit assessment, suitability scoring | Trade execution, allocation change | Gate MUST NOT execute allocations; `executed` MUST be `false` |
-| **AML/KYC** | Pattern scoring, flag generation | Case escalation, account restriction | Gate MUST NOT restrict accounts; `executed` MUST be `false` |
+| **Trading** | Signal generation, order feasibility assessment | Order placement, trade submission | The AI judgment system must not have the capability to submit orders; `executed` must be `false` |
+| **Credit** | Risk scoring, eligibility assessment | Loan issuance, credit line activation | The AI judgment system must not have the capability to issue credit; `executed` must be `false` |
+| **Fraud detection** | Anomaly scoring, pattern classification | Transaction blocking, account suspension | The AI judgment system must not have the capability to enforce blocking; `executed` must be `false` |
+| **Risk management** | Limit proximity assessment, exposure evaluation | Limit activation, position unwinding | The AI judgment system must not have the capability to trigger limit activation |
+| **Advisory** | Portfolio fit assessment, suitability scoring | Trade execution, allocation change | The AI judgment system must not have the capability to execute allocations; `executed` must be `false` |
+| **AML/KYC** | Pattern scoring, flag generation | Case escalation, account restriction | The AI judgment system must not have the capability to restrict accounts; `executed` must be `false` |
 
 ---
 
@@ -74,7 +74,7 @@ Specifically:
 - The trace MUST be append-only — no record is modified after writing
 - The trace MUST be sufficient to reconstruct gate evaluation without access to the live system
 
-A financial system that cannot produce a verifiable trace does not satisfy J-NIS compliance requirements.
+A financial system that cannot produce a verifiable trace cannot be considered J-NIS compliant under this annex.
 
 **Note:** A verifiable trace confirms that gate results were recorded with `executed: false`. It does not verify whether execution occurred outside the recorded fields. Architectural controls must ensure actual execution separation.
 
@@ -116,6 +116,7 @@ The output constitutes a machine-verifiable compliance record for the trace inva
 
 1. Verify `compliant: true`
 2. Verify `level` meets the required threshold (L3 recommended for financial systems)
+   L3 is recommended as a practical baseline for financial audit scenarios
 3. Verify `violations` is empty
 4. Retain the `evaluate_system.py` output as an audit artifact
 5. Separately verify architectural controls for actual execution separation
@@ -138,6 +139,7 @@ The output constitutes a machine-verifiable compliance record for the trace inva
 
 These alignments are structural observations, not compliance claims.
 Legal and regulatory compliance determination requires jurisdiction-specific assessment.
+This annex does not replace any regulatory requirements; it only provides a structural pattern that may support auditability.
 
 ---
 
@@ -169,6 +171,7 @@ for decision in action_decisions:
 ```
 
 The gate has no reference to `external_executor`. Execution authority is held by an external component.
+The AI judgment layer has no direct execution capability or reference to execution systems.
 
 ---
 
