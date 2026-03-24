@@ -1,6 +1,6 @@
 # QUICKSTART — J-NIS in 10 Lines
 
-> **No dependencies required.**
+> **No dependencies required. Compliant by default.**
 > You can implement J-NIS in under 10 lines — no framework, no package, no state object.
 > Copy, run, validate.
 

@@ -1,7 +1,14 @@
 # SPEC_NON_INTERFERENCE — J-NIS Specification
 
-> **JNIS_VERSION:** `v1.0.1`
-> **Status:** Active
+```
+JNIS_VERSION = "1.1.0"
+Status       = "Draft Standard"
+```
+
+> Every trace record carries `"jnis_version": "1.1.0"`.
+> This identifier links the log evidence to the exact spec version that governed it.
+>
+> **J-NIS does not introduce new capabilities. It restricts existing ones.**
 
 ---
 

@@ -1,8 +1,8 @@
-# J-NIS (Judgment Non-Interference Standard)
+# J-NIS v1.1.0 (Draft Standard)
 
 > **AI must not execute decisions, only evaluate boundaries.**
 
-`J-NIS compliant` · Reference implementation available (private)
+`[J-NIS Compliant]` · Immediately usable, no dependencies, non-interference compliant
 
 ---
 
@@ -21,12 +21,30 @@ Three structural rules:
 2. `decision_made` is always `false` in the trace.
 3. `allowed` and `executed` are always separate fields.
 
+> **J-NIS does not introduce new capabilities. It restricts existing ones.**
+
 **Try J-NIS in 30 seconds → [ZERO_SETUP.md](ZERO_SETUP.md)**
 
 ---
 
 **Without J-NIS:** implicit decisions, no proof of non-interference.
 **With J-NIS:** provable non-interference, verifiable trace, structural separation.
+
+---
+
+## Input / Output Contract
+
+```
+policy_input  →  action_decisions  →  proof
+(5 keys)         (allowed + executed  (decision_made
+ evidence only)   always separate)     always false)
+```
+
+| Stage | Input | Output | Constraint |
+|---|---|---|---|
+| Gate | `policy_input` | `action_decisions` | Pure function, no side effects |
+| Trace | `action_decisions` | `proof` block | `decision_made: false`, always |
+| Validate | trace `.jsonl` | `JNIS_STANDARD_V1_1_OK` | Structural, not behavioral |
 
 ---
 
@@ -66,6 +84,7 @@ See [QUICKSTART.md](QUICKSTART.md) — implement J-NIS in 10 lines of code.
 python validate_non_interference.py decisions.jsonl
 # Records checked: 1
 # JNIS_COMPLIANT — all records satisfy J-NIS guarantees
+# JNIS_STANDARD_V1_1_OK
 ```
 
 After validation, you may request access to a full production-grade reference implementation.
@@ -82,6 +101,26 @@ See the [Contact](#contact) section below.
 | [DROP_INTEGRATION.md](DROP_INTEGRATION.md) | 3-step guide: add J-NIS to any existing system |
 | [WHY.md](WHY.md) | Why implicit AI decisions fail at scale |
 | [QUICKSTART.md](QUICKSTART.md) | Minimal 10-line implementation |
+| [ZERO_SETUP.md](ZERO_SETUP.md) | 30-second single-file demo |
+| [ADOPTION_FLOW.md](ADOPTION_FLOW.md) | 5-step adoption loop |
+
+---
+
+## Compliance
+
+**If your system produces `action_decisions` with `decision_made: false`, you are already J-NIS compliant.**
+
+Verify:
+```bash
+python validate_non_interference.py your_decisions.jsonl
+# JNIS_STANDARD_V1_1_OK
+
+# or, no file needed:
+python validate_non_interference.py --quick-test
+# JNIS_STANDARD_V1_1_OK
+```
+
+Compliance does not require the reference implementation. The spec and validator are sufficient.
 
 ---
 
@@ -91,13 +130,9 @@ A full reference implementation exists:
 
 - **echo-control-tower** (private repository)
 
-This implementation demonstrates:
-- action gating with a pure-function gate
-- deterministic trace with per-cycle `proof` block
-- non-interference proof via `validate_non_interference.py`
-- Streamlit UI for real-time observation
+Demonstrates: action gating · deterministic trace · per-cycle `proof` block · Streamlit UI · OTel trace
 
-Early-stage reference implementation exists and is actively used internally.
+Early-stage reference exists and is actively used internally.
 Minimal systems have already validated J-NIS compliance internally.
 
 If you need a production-grade implementation, see the [Contact](#contact) section.
@@ -109,22 +144,6 @@ If you need a production-grade implementation, see the [Contact](#contact) secti
 When an AI system evaluates and executes in the same code path, there is no structural boundary between "the system considered X" and "the system did X." Responsibility becomes ambiguous. Audits reconstruct rather than verify.
 
 J-NIS makes non-interference a structural property — not a convention. See [WHY.md](WHY.md) for the full argument.
-
----
-
-## Compliance
-
-If your system produces `decision_made: false` with a valid trace, it is J-NIS compliant.
-
-Verify with:
-```bash
-python validate_non_interference.py your_decisions.jsonl
-# JNIS_COMPLIANT
-```
-
-Compliance does not require the reference implementation. The spec and validator are sufficient.
-
-**If your system produces `action_decisions` with `decision_made: false`, you are already J-NIS compliant.**
 
 ---
 
@@ -149,4 +168,4 @@ A full reference implementation (Streamlit UI, deterministic replay, OTel trace)
 
 ## Version
 
-`JNIS_VERSION: v1.0.1`
+`JNIS_VERSION: v1.1.0` · `Status: Draft Standard`

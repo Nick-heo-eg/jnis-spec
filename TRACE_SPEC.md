@@ -1,9 +1,14 @@
 # TRACE_SPEC — J-NIS Trace Format
 
-> **JNIS_VERSION:** `v1.0.1`
+```
+JNIS_VERSION = "1.1.0"
+Status       = "Draft Standard"
+```
 
 Every J-NIS observation cycle produces one line in an append-only `.jsonl` file.
 The trace is the verifiable record that non-interference was maintained.
+
+Every record must include `"jnis_version": "1.1.0"` as the first field.
 
 ---
 
