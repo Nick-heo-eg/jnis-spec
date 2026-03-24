@@ -16,7 +16,7 @@ Every record must include `"jnis_version": "1.1.0"` as the first field.
 
 ```json
 {
-  "jnis_version":     "v1.0.1",
+  "jnis_version":     "1.1.0",
   "timestamp":        "<ISO 8601 UTC>",
   "policy_input":     { ... },
   "action_decisions": [ ... ],
@@ -25,6 +25,8 @@ Every record must include `"jnis_version": "1.1.0"` as the first field.
 ```
 
 Additional diagnostic fields are permitted. The four required fields must always be present.
+
+This schema is minimal and sufficient for compliance verification.
 
 ---
 

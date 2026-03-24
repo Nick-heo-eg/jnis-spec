@@ -1,8 +1,10 @@
-# J-NIS v1.1.0 (Draft Standard)
+# J-NIS v1.1.0 (Draft Standard – Ready for use)
 
 > **AI must not execute decisions, only evaluate boundaries.**
 
-`[J-NIS Compliant]` · Immediately usable, no dependencies, non-interference compliant
+This draft is already production-usable for boundary enforcement and audit trace.
+
+`[J-NIS Compliant]` · No dependencies · No permission required · No system redesign needed
 
 ---
 
@@ -21,7 +23,9 @@ Three structural rules:
 2. `decision_made` is always `false` in the trace.
 3. `allowed` and `executed` are always separate fields.
 
-> **J-NIS does not introduce new capabilities. It restricts existing ones.**
+> **J-NIS does not add new functionality. It removes decision authority from AI.**
+
+If your system outputs `decision_made: false`, you are already compliant.
 
 **Try J-NIS in 30 seconds → [ZERO_SETUP.md](ZERO_SETUP.md)**
 
@@ -106,16 +110,23 @@ See the [Contact](#contact) section below.
 
 ---
 
-## Compliance
+## Compliance Definition
+
+J-NIS compliance = `action_decisions` present + `decision_made: false` + trace reproducible.
+
+That's it. No certification. No approval process. No integration fee.
 
 **If your system produces `action_decisions` with `decision_made: false`, you are already J-NIS compliant.**
 
 Verify:
 ```bash
 python validate_non_interference.py your_decisions.jsonl
+# JNIS_COMPLIANT
 # JNIS_STANDARD_V1_1_OK
+# You are already J-NIS compliant
+# No further integration required
 
-# or, no file needed:
+# or instantly, no file needed:
 python validate_non_interference.py --quick-test
 # JNIS_STANDARD_V1_1_OK
 ```
@@ -144,6 +155,19 @@ If you need a production-grade implementation, see the [Contact](#contact) secti
 When an AI system evaluates and executes in the same code path, there is no structural boundary between "the system considered X" and "the system did X." Responsibility becomes ambiguous. Audits reconstruct rather than verify.
 
 J-NIS makes non-interference a structural property — not a convention. See [WHY.md](WHY.md) for the full argument.
+
+---
+
+## No Adoption Barrier
+
+You do not need permission to use J-NIS.
+
+- No registration
+- No approval
+- No dependency installation
+- No system redesign
+
+Copy the gate function from [ZERO_SETUP.md](ZERO_SETUP.md), run it, validate. You are compliant.
 
 ---
 

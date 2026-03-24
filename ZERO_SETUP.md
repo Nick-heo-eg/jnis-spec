@@ -1,6 +1,6 @@
 # ZERO_SETUP — Run J-NIS in 30 seconds
 
-> **You are already compliant if this runs.**
+> **You are already J-NIS compliant if this runs.**
 
 No pip install. No framework. No config. One file, one command.
 
