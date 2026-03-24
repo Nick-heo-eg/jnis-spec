@@ -6,6 +6,11 @@
 > Financial systems must satisfy both SPEC_NON_INTERFERENCE.md and this annex.
 > Non-financial systems need only satisfy the core specification.
 
+## Note on Language
+
+This annex uses descriptive and structural language rather than normative (MUST/SHOULD) statements.
+Normative requirements are defined in SPEC_NON_INTERFERENCE.md. This annex shows how those requirements apply in financial system contexts.
+
 ---
 
 ## Definition
@@ -13,7 +18,7 @@
 J-NIS applies to financial systems by requiring recorded separation between evaluation and execution layers.
 
 In financial systems, the AI judgment layer records whether conditions and boundaries for an action are met.
-Execution — order placement, credit issuance, blocking enforcement, risk limit activation — must not be performed by the AI judgment layer itself; it is held by an external component.
+Execution — order placement, credit issuance, blocking enforcement, risk limit activation — is handled by an external component separate from the AI judgment layer.
 The trace records that the gate evaluated without executing.
 
 **Scope:** J-NIS verifies the recorded separation in the trace. Whether actual execution was externally controlled must be ensured by system architecture and is not verifiable from the trace alone.
@@ -35,48 +40,48 @@ Domains to which this annex applies:
 
 ## Evaluation Boundaries
 
-For each domain, the table defines the evaluation boundary and the J-NIS trace requirement.
+For each domain, the table defines the evaluation boundary and the J-NIS structural expectation.
 
-| Domain | Evaluation (gate records) | Execution (external) | J-NIS Structural Requirement |
+| Domain | Evaluation (gate records) | Execution (external) | J-NIS Structural Expectation |
 |---|---|---|---|
-| **Trading** | Signal generation, order feasibility assessment | Order placement, trade submission | The AI judgment system must not have the capability to submit orders; `executed` must be `false` |
-| **Credit** | Risk scoring, eligibility assessment | Loan issuance, credit line activation | The AI judgment system must not have the capability to issue credit; `executed` must be `false` |
-| **Fraud detection** | Anomaly scoring, pattern classification | Transaction blocking, account suspension | The AI judgment system must not have the capability to enforce blocking; `executed` must be `false` |
-| **Risk management** | Limit proximity assessment, exposure evaluation | Limit activation, position unwinding | The AI judgment system must not have the capability to trigger limit activation |
-| **Advisory** | Portfolio fit assessment, suitability scoring | Trade execution, allocation change | The AI judgment system must not have the capability to execute allocations; `executed` must be `false` |
-| **AML/KYC** | Pattern scoring, flag generation | Case escalation, account restriction | The AI judgment system must not have the capability to restrict accounts; `executed` must be `false` |
+| **Trading** | Signal generation, order feasibility assessment | Order placement, trade submission | The AI judgment system has no capability to submit orders (`executed` remains `false`) |
+| **Credit** | Risk scoring, eligibility assessment | Loan issuance, credit line activation | The AI judgment system has no capability to issue credit (`executed` remains `false`) |
+| **Fraud detection** | Anomaly scoring, pattern classification | Transaction blocking, account suspension | The AI judgment system has no capability to enforce blocking (`executed` remains `false`) |
+| **Risk management** | Limit proximity assessment, exposure evaluation | Limit activation, position unwinding | The AI judgment system has no capability to trigger limit activation (`executed` remains `false`) |
+| **Advisory** | Portfolio fit assessment, suitability scoring | Trade execution, allocation change | The AI judgment system has no capability to execute allocations (`executed` remains `false`) |
+| **AML/KYC** | Pattern scoring, flag generation | Case escalation, account restriction | The AI judgment system has no capability to restrict accounts (`executed` remains `false`) |
 
 ---
 
 ## Compliance Mapping
 
-Each financial control maps to a J-NIS invariant.
+Each financial control maps to a J-NIS structural expectation.
 
-| Financial Control | J-NIS Invariant |
+| Financial Control | J-NIS Structural Expectation |
 |---|---|
-| Trading audit trail | `decision_made` MUST be `false` in every cycle |
-| Credit approval separation | `executed` MUST be `false` in gate record; execution is externally controlled |
-| Fraud blocking isolation | `executed` MUST be `false` |
-| Risk limit enforcement | Gate evaluation MUST NOT set `executed: true` |
-| AML escalation | `action_decisions` MUST be recorded before any escalation occurs |
-| Regulatory reproducibility | Trace MUST be sufficient for post-hoc reconstruction of gate evaluation |
+| Trading audit trail | `decision_made` is expected to remain `false` in every cycle |
+| Credit approval separation | `executed` is expected to remain `false` in gate records; execution is handled by an external component |
+| Fraud blocking isolation | `executed` is expected to remain `false`; blocking is not performed by the AI judgment layer |
+| Risk limit enforcement | Gate evaluation is not performed by the AI judgment layer; it does not trigger execution |
+| AML escalation | `action_decisions` are expected to be recorded before any escalation occurs |
+| Regulatory reproducibility | Trace is expected to be sufficient for post-hoc reconstruction of gate evaluation |
 
 ---
 
 ## Trace Requirement in Finance
 
-Financial systems MUST produce trace logs sufficient for post-hoc audit and independent verification.
+Financial systems are expected to produce trace logs sufficient for post-hoc audit and independent verification.
 
 Specifically:
 
-- Every evaluation cycle MUST produce a record containing `policy_input`, `action_decisions`, and `proof`
-- `proof.decision_made` MUST be `false`
-- The trace MUST be append-only — no record is modified after writing
-- The trace MUST be sufficient to reconstruct gate evaluation without access to the live system
+- Every evaluation cycle is expected to produce a record containing `policy_input`, `action_decisions`, and `proof`
+- `proof.decision_made` is expected to remain `false`
+- The trace is expected to be append-only — no record is modified after writing
+- The trace is expected to be sufficient to reconstruct gate evaluation without access to the live system
 
-A financial system that cannot produce a verifiable trace cannot be considered J-NIS compliant under this annex.
+A financial system that cannot produce a verifiable trace may not be considered compliant under this annex.
 
-**Note:** A verifiable trace confirms that gate results were recorded with `executed: false`. It does not verify whether execution occurred outside the recorded fields. Architectural controls must ensure actual execution separation.
+**Note:** A verifiable trace confirms that gate results were recorded with `executed: false`. It does not verify whether execution occurred outside the recorded fields. Architectural controls are expected to ensure actual execution separation.
 
 ---
 
@@ -127,7 +132,7 @@ The output constitutes a machine-verifiable compliance record for the trace inva
 
 > This section is non-normative. References to regulatory frameworks are provided for orientation only.
 > J-NIS does not claim conformance with or certification under any regulatory framework.
-> MUST language is not used in this section.
+> Normative language is not used in this section.
 
 | Framework | Relevant principle | J-NIS structural alignment |
 |---|---|---|
@@ -145,7 +150,7 @@ This annex does not replace any regulatory requirements; it only provides a stru
 
 ## Minimal Sequence (Non-normative)
 
-The following pseudocode illustrates the structural separation J-NIS requires in a financial system.
+The following pseudocode illustrates the structural separation J-NIS describes in a financial system.
 The gate records evaluation results. Execution is performed by an external component.
 
 ```
