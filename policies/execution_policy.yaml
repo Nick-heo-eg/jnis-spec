@@ -22,3 +22,7 @@ execution_rules:
       Direct python script invocation (outside jnis_exec) is forbidden
       as an execution entry point.
     on_violation: BLOCK
+
+rate_limits:
+  max_execution_rate: 10  # per minute
+  concurrent_limit: 2
