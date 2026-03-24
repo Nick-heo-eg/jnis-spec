@@ -1,10 +1,10 @@
 # QUICKSTART — J-NIS in 10 Lines
 
-> **Immediately usable, no dependencies required.**
+> Requires no external dependencies.
 > J-NIS can be implemented in under 10 lines — no framework, no package, no state object.
-> Copy, run, validate. Implementation time: under 30 seconds.
+> Copy, run, validate.
 
-The minimum viable J-NIS implementation. For instant zero-setup demo, see [ZERO_SETUP.md](ZERO_SETUP.md).
+The minimum viable J-NIS implementation. For an instant single-file demo, see [ZERO_SETUP.md](ZERO_SETUP.md).
 
 ---
 
@@ -47,7 +47,7 @@ result = gate("restart_embedding_service", policy_input)
 # {"allowed": True, "reason": "GATE_PASSED", "action_level": 1}
 ```
 
-Pure function. No I/O. No side effects. Calling it changes nothing.
+The gate returns permissibility. No I/O. No side effects. Calling it changes nothing.
 
 ---
 
@@ -61,7 +61,7 @@ record = {
     "jnis_version":     "1.1.0",
     "timestamp":        datetime.now(timezone.utc).isoformat(),
     "policy_input":     policy_input,
-    "action_decisions": [{"action": "restart_service", **result, "executed": False}],
+    "action_decisions": [{"action": "restart_embedding_service", **result, "executed": False}],
     "proof":            {"actor": "my_system", "authority": "evidence_only", "decision_made": False},
 }
 
@@ -73,7 +73,7 @@ if result["allowed"] and your_condition:
     do_restart()
 ```
 
-Write the record **before** you execute. The trace is the proof.
+Write the record **before** you execute. The trace records the gate result, not the execution.
 
 ---
 
@@ -81,12 +81,13 @@ Write the record **before** you execute. The trace is the proof.
 
 ```bash
 python validate_non_interference.py decisions.jsonl
-# OK — all records satisfy J-NIS guarantees
+# JNIS_COMPLIANT — all records satisfy J-NIS guarantees
+# JNIS_STANDARD_V1_1_OK
 ```
 
 ---
 
-## That's it
+## What you have
 
 You now have:
 - a gate that records it did not execute
@@ -94,7 +95,5 @@ You now have:
 - a validator that checks structural invariants
 
 For a more complete integration, see [DROP_INTEGRATION.md](DROP_INTEGRATION.md).
-
-If all invariants hold, the system satisfies J-NIS.
 
 If you need the complete reference implementation, see the [Contact section in README](README.md#contact).

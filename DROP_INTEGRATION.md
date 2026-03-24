@@ -7,7 +7,7 @@
 
 ## What you're adding
 
-A structural gate between evaluation and execution — with a per-cycle trace that proves nothing executed without gate evaluation first.
+A structural gate between evaluation and execution — with a per-cycle trace that records the gate result before execution occurs.
 
 Before J-NIS:
 ```
@@ -71,7 +71,7 @@ There are exactly 5 keys. Do not add or remove any.
 ```python
 from runtime.control_tower.export_api import get_action_decisions
 
-actions = ["restart_service", "pause_scheduler", "enter_safe_mode"]
+actions = ["restart_embedding_service", "pause_scheduler", "enter_safe_mode"]
 decisions = get_action_decisions(policy_input, actions)
 ```
 
@@ -79,13 +79,13 @@ Result:
 
 ```python
 [
-    {"action": "restart_service",  "allowed": True,  "reason": "GATE_PASSED",    "action_level": 1, "executed": False},
-    {"action": "pause_scheduler",  "allowed": False, "reason": "STALE_STATE",    "action_level": 2, "executed": False},
-    {"action": "enter_safe_mode",  "allowed": False, "reason": "NO_OBSERVATION", "action_level": 3, "executed": False},
+    {"action": "restart_embedding_service", "allowed": True,  "reason": "GATE_PASSED",    "action_level": 1, "executed": False},
+    {"action": "pause_scheduler",           "allowed": False, "reason": "STALE_STATE",    "action_level": 2, "executed": False},
+    {"action": "enter_safe_mode",           "allowed": False, "reason": "NO_OBSERVATION", "action_level": 3, "executed": False},
 ]
 ```
 
-`executed` is always `False` here. The gate does not execute anything.
+`executed` is always `False` here. The gate returns permissibility — it does not execute.
 
 ---
 
@@ -98,7 +98,7 @@ import json
 from datetime import datetime, timezone
 
 record = {
-    "jnis_version":     "v1.0.1",
+    "jnis_version":     "1.1.0",
     "timestamp":        datetime.now(timezone.utc).isoformat(),
     "policy_input":     policy_input,
     "action_decisions": decisions,
@@ -119,7 +119,7 @@ for d in decisions:
         # if you log execution separately, set executed=True in your own record
 ```
 
-The trace exists before execution. If execution never happens, the trace still records the gate result.
+The trace is written before execution. If execution never happens, the trace still records the gate result.
 
 ---
 
@@ -129,9 +129,9 @@ Edit `ACTION_LEVELS` in `engine/config.py`:
 
 ```python
 ACTION_LEVELS = {
-    "restart_service":    1,   # auto-eligible, blocked by NO_OBSERVATION/UNKNOWN only
+    "restart_service":    1,   # blocked by NO_OBSERVATION/UNKNOWN_STATE only
     "pause_scheduler":    2,   # also blocked when state is stale
-    "enter_safe_mode":    3,   # operator note required in ACTIVE mode
+    "enter_safe_mode":    3,   # highest restriction level
 }
 ```
 
@@ -139,7 +139,8 @@ ACTION_LEVELS = {
 |---|---|
 | 1 | `NO_OBSERVATION`, `UNKNOWN_STATE`, `NOT_ALLOWED_IN_STATE` |
 | 2 | Level 1 reasons + `STALE_STATE` |
-| 3 | Level 2 reasons + requires `operator_note` |
+| 3 | Level 2 reasons |
+| 99 | Unknown actions (not in ACTION_LEVELS) |
 
 ---
 
@@ -156,7 +157,7 @@ policy_input = {
     "stale": False, "collector_ok": True,
 }
 
-result = allow_action("restart_service", policy_input)
+result = allow_action("restart_embedding_service", policy_input)
 # {"allowed": True, "reason": "GATE_PASSED", "action_level": 1}
 ```
 
@@ -168,18 +169,17 @@ result = allow_action("restart_service", policy_input)
 
 | Rule | Why |
 |---|---|
-| Write trace before execution | The log is evidence of what the gate said *before* action |
-| `proof.decision_made` always `False` | The system evaluated — it did not decide |
+| Write trace before execution | The trace records what the gate said before any action |
+| `proof.decision_made` always `False` | Every cycle records that the AI system did not exercise decision authority |
 | `policy_input` has exactly 5 keys | The gate will not accept partial input |
-| `executed` reflects reality | Gate result and execution are structurally separate |
+| `executed: false` in the gate record | Gate result and execution are separate fields |
 
 ---
 
 ## Verify your integration
 
 ```bash
-python scripts/validate_non_interference.py path/to/your/decisions.jsonl
-# OK — all records satisfy J-NIS guarantees
+python validate_non_interference.py path/to/your/decisions.jsonl
+# JNIS_COMPLIANT — all records satisfy J-NIS guarantees
+# JNIS_STANDARD_V1_1_OK
 ```
-
-Reference validator: [echo-control-tower/scripts/validate_non_interference.py](https://github.com/Nick-heo-eg/echo-control-tower/blob/main/scripts/validate_non_interference.py)

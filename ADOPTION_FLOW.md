@@ -31,13 +31,15 @@
   │                                         │
   │  → JNIS_COMPLIANT                       │
   │                                         │
-  │  Your trace is now verifiable.          │
+  │  Your trace satisfies structural        │
+  │  invariants.                            │
   └────────────────────┬────────────────────┘
                        │
                        ▼
   Step 4: Compare with reference implementation
   ┌─────────────────────────────────────────┐
-  │  A production-grade reference exists.   │
+  │  A reference implementation exists      │
+  │  (early-stage, internal use).           │
   │                                         │
   │  It adds:                               │
   │  - system state collector               │
@@ -63,16 +65,14 @@
 
 ---
 
-## Why This Flow Works
-
-Each step adds a structural guarantee:
+## What each step adds
 
 | Step | What you gain |
 |---|---|
-| README | Mental model — understand the separation |
-| QUICKSTART | Working gate — prove it in your own codebase |
-| validate | Trust — machine-verified compliance |
-| Reference | Completeness — production-grade patterns |
-| Request | Access — full implementation with trace replay |
+| README | Conceptual model — understand the separation |
+| QUICKSTART | Working gate — implement J-NIS in your own codebase |
+| validate | Verification — machine-checkable trace invariants |
+| Reference | Completeness — fuller implementation with replay and UI |
+| Request | Access — full reference with OTel trace |
 
-The loop is designed so that each step increases confidence in the standard — independently of the reference implementation. By step 3, your system is J-NIS compliant without ever seeing the reference code.
+The loop is designed so that each step is useful independently of the reference implementation. By step 3, your system produces a J-NIS-compliant trace without the reference code.

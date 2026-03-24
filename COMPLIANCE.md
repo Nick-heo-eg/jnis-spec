@@ -1,7 +1,10 @@
 # COMPLIANCE — J-NIS Compliance Levels
 
-> Compliance is verified by invariant satisfaction, not system behavior.
+> Compliance is verified by trace invariant satisfaction.
 > Each level is independently verifiable from trace logs alone.
+>
+> **Scope:** J-NIS verifies what the trace records. Whether execution actually occurred is outside
+> the trace boundary and must be ensured by system architecture.
 
 ---
 
@@ -11,7 +14,7 @@
 
 **Requirement:** `proof.decision_made` is `false` in every trace record.
 
-This is the minimum assertion. It states that the system did not make a decision in this cycle.
+This is the minimum recorded assertion. It states that the system recorded non-decision for this cycle.
 
 ```json
 { "proof": { "decision_made": false } }
@@ -23,9 +26,9 @@ This is the minimum assertion. It states that the system did not make a decision
 
 ### Level 1 — Gate Evaluation Recorded
 
-**Requirement:** `action_decisions` is present and non-empty, with `action`, `allowed`, `reason`, `action_level`, and `executed` fields per entry.
+**Requirement:** `action_decisions` is present and non-empty, with `action`, `allowed`, `reason`, `action_level`, and `executed` fields per entry. All `executed` values are `false`.
 
-This confirms that the gate was evaluated and its result was recorded before any execution occurred.
+This confirms that gate results are recorded in the trace with separated fields.
 
 ```json
 {
@@ -41,11 +44,13 @@ This confirms that the gate was evaluated and its result was recorded before any
 
 ### Level 2 — Trace Reproducible
 
-**Requirement:** Given stored `policy_input` and `action_decisions`, re-running the gate function produces the same result.
+**Requirement:** Given stored `policy_input` and `action_decisions`, re-running the gate function produces the same `allowed` and `reason` for every entry.
 
-This confirms that the gate is deterministic and the trace is not retroactively constructed.
+This confirms that the gate is deterministic and the stored results match what the gate would produce from the same input.
 
-**Verified by:** replay — `gate(action, policy_input)` matches stored `allowed` and `reason`
+**Verified by:** `scripts/replay_demo.py` — `gate(action, policy_input)` matches stored results
+
+**Note:** Replay requires the gate function definition. The trace alone is not sufficient for L2 verification.
 
 ---
 
@@ -59,6 +64,7 @@ This confirms that the gate is deterministic and the trace is not retroactively 
 | Execution isolation | No `action_decisions` entry has `executed: true` |
 | Schema stability | `policy_input` has exactly 5 required keys |
 | Version traceability | `jnis_version` is present in every record |
+| Reason validity | `reason` is from the declared `VALID_REASONS` set |
 
 **Verified by:** `python validate_non_interference.py <trace.jsonl>`
 
@@ -68,9 +74,9 @@ This confirms that the gate is deterministic and the trace is not retroactively 
 
 | Level | What it verifies | Tool |
 |---|---|---|
-| L0 | `decision_made: false` present | manual inspection |
-| L1 | `action_decisions` recorded | manual inspection |
-| L2 | gate is deterministic, trace reproducible | `replay_demo.py` |
+| L0 | `decision_made: false` recorded | trace inspection |
+| L1 | `action_decisions` recorded with separated fields | trace inspection |
+| L2 | gate is deterministic; replay matches stored results | `replay_demo.py` |
 | L3 | all invariants hold across full trace | `validate_non_interference.py` |
 
 A system satisfying L3 satisfies all lower levels.
@@ -79,11 +85,10 @@ A system satisfying L3 satisfies all lower levels.
 
 ## Key Statement
 
-> **Compliance must be verifiable without access to the original system.**
+> **Compliance must be verifiable without access to the original system's runtime.**
 >
-> The trace log alone is sufficient to verify J-NIS compliance at all four levels.
-
-Compliance must be externally verifiable and independently measurable.
+> The trace record alone is sufficient for L0 and L1. L2 requires the gate function definition.
+> L3 verifies all structural invariants.
 
 ---
 
@@ -91,6 +96,6 @@ Compliance must be externally verifiable and independently measurable.
 
 | Tool | Verifies | Level |
 |---|---|---|
-| `validate_non_interference.py` | Internal invariant check | L3 |
-| `scripts/replay_demo.py` | Trace reconstruction | L2 + L3 |
-| `scripts/evaluate_system.py` | External system assessment | L0 – L3 |
+| `validate_non_interference.py` | Structural invariants | L3 |
+| `scripts/replay_demo.py` | Gate determinism + invariants | L2 + L3 |
+| `scripts/evaluate_system.py` | Any system's trace | L0 – L3 |

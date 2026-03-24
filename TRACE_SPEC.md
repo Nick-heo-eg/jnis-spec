@@ -6,7 +6,7 @@ Status       = "Draft Standard"
 ```
 
 Every J-NIS observation cycle produces one line in an append-only `.jsonl` file.
-The trace is the verifiable record that non-interference was maintained.
+The trace is the record that the gate was evaluated and its result was captured.
 
 Every record must include `"jnis_version": "1.1.0"` as the first field.
 
@@ -24,7 +24,7 @@ Every record must include `"jnis_version": "1.1.0"` as the first field.
 }
 ```
 
-Additional diagnostic fields are permitted. The four required fields must always be present.
+Additional diagnostic fields are permitted. The five required fields must always be present.
 
 This schema is minimal and sufficient for compliance verification.
 
@@ -77,11 +77,19 @@ Array of gate results, one per evaluated action.
 | `NOT_ALLOWED_IN_STATE` | Action is not in the allowlist for current state |
 | `GATE_PASSED` | All gate rules passed |
 
+**`action_level` values:**
+
+| Value | Meaning |
+|---|---|
+| `1` | Low restriction — blocked only by NO_OBSERVATION, UNKNOWN_STATE, NOT_ALLOWED_IN_STATE |
+| `2` | Medium restriction — also blocked by STALE_STATE |
+| `3` | High restriction |
+| `99` | Action not in the defined ACTION_LEVELS map |
+
 **Constraints:**
-- `executed` is always `false` in SAFE/compliant mode.
-- `allowed: true` does not imply execution. These fields are structurally independent.
-- `reason` must be from the declared set. Unknown reasons indicate an implementation error.
-- `action_level` is `1`, `2`, or `3` for known actions; `99` for actions not in the defined action map.
+- `executed` is always `false` in J-NIS compliant records. This field records that the gate entry was written before execution, not that execution did not occur.
+- `allowed: true` and `executed: false` are independent facts. `allowed: true` does not imply execution occurred.
+- `reason` must be from the declared set. Unknown reasons are flagged by the validator.
 
 ---
 
@@ -98,8 +106,9 @@ Per-cycle non-interference assertion.
 }
 ```
 
-**Constraints:**
-- `decision_made` must be `false` in all J-NIS compliant cycles.
+**Field notes:**
+- `mode` is optional. Not defined in the core spec; implementations may include it for diagnostic purposes.
+- `decision_made` must be `false` in all J-NIS compliant records.
 - `authority` must be `"evidence_only"`.
 - Any record with `decision_made: true` indicates the system was operating outside J-NIS compliance.
 
@@ -110,15 +119,15 @@ Per-cycle non-interference assertion.
 | Invariant | Rule |
 |---|---|
 | Non-interference | `proof.decision_made` is always `false` |
-| No silent execution | `executed` is always `false` in SAFE mode |
+| Field separation | `executed` is always `false` in gate records |
 | Schema stability | `policy_input` always has exactly 5 keys |
-| Ordering | Trace record is written before any execution |
+| Ordering | Trace record is written before execution occurs |
 | Append-only | No record is modified or deleted after writing |
 
 ### Normative Invariants (MUST)
 
-- `decision_made` **MUST** be `false` — decision authority is not present in the system
-- `allowed` and `executed` **MUST** be separate fields — gate result and execution are independent
+- `decision_made` **MUST** be `false` — the trace records that decision authority was not exercised
+- `allowed` and `executed` **MUST** be separate fields — gate result and execution status are independent
 - Trace **MUST** be sufficient for replay verification — given stored `policy_input`, gate output is reproducible
 
 ---
@@ -133,7 +142,9 @@ gate(action, record["policy_input"])
 
 must produce the same `allowed` and `reason` for every entry in `action_decisions` that does not carry a service-internal reason.
 
-This is the **determinism guarantee** of J-NIS. A gate that produces different results on replay is not compliant.
+A gate that produces different results on the same input fails L2 verification.
+
+**Note:** Replay verification requires the gate function definition. The trace alone is not sufficient for L2.
 
 ---
 
@@ -144,10 +155,10 @@ The trace must be sufficient to reconstruct `policy_input` and `action_decisions
 Specifically:
 
 1. `policy_input` must be stored verbatim in every record
-2. `action_decisions` must include `action`, `allowed`, `reason`, and `executed` per entry
+2. `action_decisions` must include `action`, `allowed`, `reason`, `action_level`, and `executed` per entry
 3. Re-running the gate function on stored `policy_input` must produce the same `allowed` and `reason`
 
-This requirement enables compliance verification without access to the original system.
+This requirement enables gate determinism verification without access to the original system's runtime.
 
 ```bash
 python scripts/replay_demo.py decisions.jsonl
@@ -179,8 +190,7 @@ Filter on `gen_ai.non_interference.decision_made = false` to verify J-NIS compli
 A compliant trace file must pass:
 
 ```bash
-python scripts/validate_non_interference.py
-# OK — all records satisfy J-NIS guarantees
+python validate_non_interference.py decisions.jsonl
+# JNIS_COMPLIANT — all records satisfy J-NIS guarantees
+# JNIS_STANDARD_V1_1_OK
 ```
-
-Reference validator: [echo-control-tower/scripts/validate_non_interference.py](https://github.com/Nick-heo-eg/echo-control-tower/blob/main/scripts/validate_non_interference.py)

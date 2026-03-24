@@ -2,7 +2,7 @@
 
 > **AI must not execute decisions, only evaluate boundaries.**
 
-This draft is production-usable for non-interference enforcement.
+This draft is ready for use for non-interference tracing.
 
 `[J-NIS Compliant]` · No dependencies · Open standard · No system redesign needed
 
@@ -10,7 +10,7 @@ This draft is production-usable for non-interference enforcement.
 Category:   AI Safety Standard
 Layer:      Decision Boundary & Non-Interference
 Type:       Constraint-based Specification
-Capability: Evaluation & Compliance Verification
+Capability: Trace Recording & Compliance Verification
 ```
 
 Tags: `AI Safety` · `Governance` · `Decision Boundary` · `Compliance`
@@ -19,15 +19,15 @@ Tags: `AI Safety` · `Governance` · `Decision Boundary` · `Compliance`
 
 ## Definition
 
-J-NIS defines a constraint-based boundary for AI systems where decision authority is explicitly excluded.
+J-NIS defines a trace structure for AI systems where decision authority is explicitly excluded.
 
-This standard separates evaluation from execution and enforces non-interference.
+This standard separates evaluation from execution as recorded fields, and defines verifiable invariants over those records.
 
 ---
 
 ## TL;DR
 
-An AI system that implements J-NIS can prove — through its trace — that it evaluated without deciding.
+An AI system that implements J-NIS records — through its trace — that it evaluated without deciding.
 
 ```
 observe → evaluate → record
@@ -36,20 +36,20 @@ observe → evaluate → record
 ```
 
 Three structural rules:
-1. The gate is a pure function. It cannot execute anything.
+1. The gate is a pure function. It returns permissibility — it does not execute.
 2. `decision_made` is always `false` in the trace.
 3. `allowed` and `executed` are always separate fields.
 
-> **J-NIS defines constraints, not capabilities.**
+> **J-NIS defines constraints on the trace record, not on underlying system behavior.**
 
-If your system outputs `decision_made: false`, it satisfies J-NIS compliance.
+If your system outputs `decision_made: false`, it satisfies J-NIS trace compliance.
 
 **Try J-NIS in 30 seconds → [ZERO_SETUP.md](ZERO_SETUP.md)**
 
 ---
 
 **Without J-NIS:** implicit decisions, no verifiable boundary between evaluation and execution.
-**With J-NIS:** structural separation, verifiable trace, independently checkable invariants.
+**With J-NIS:** separated trace fields, verifiable invariants, independently checkable records.
 
 ---
 
@@ -63,9 +63,9 @@ policy_input  →  action_decisions  →  proof
 
 | Stage | Input | Output | Constraint |
 |---|---|---|---|
-| Gate | `policy_input` | `action_decisions` | Pure function, no side effects |
+| Gate | `policy_input` | `action_decisions` | Returns permissibility only, no side effects |
 | Trace | `action_decisions` | `proof` block | `decision_made: false`, always |
-| Validate | trace `.jsonl` | `JNIS_STANDARD_V1_1_OK` | Structural, not behavioral |
+| Validate | trace `.jsonl` | `JNIS_STANDARD_V1_1_OK` | Structural invariants, not behavioral |
 
 ---
 
@@ -73,12 +73,12 @@ policy_input  →  action_decisions  →  proof
 
 | | Traditional AI control | J-NIS compliant |
 |---|---|---|
-| Evaluation + execution | Same code path | Structurally separated |
-| Decision record | Post-hoc log (if any) | Pre-execution trace |
+| Evaluation + execution | Same code path | Recorded as separate fields |
+| Decision record | Post-hoc log (if any) | Pre-execution trace record |
 | `decision_made` field | Not tracked | Always `false`, always present |
-| Gate function | Stateful, may trigger | Pure function, no side effects |
-| Audit trail | Reconstructed | Verifiable |
-| Non-interference proof | Convention | Structural guarantee |
+| Gate function | Stateful, may trigger | Returns permissibility only |
+| Audit trail | Reconstructed | Recorded before execution |
+| Non-interference | Convention | Trace-recorded assertion |
 
 ---
 
@@ -87,9 +87,9 @@ policy_input  →  action_decisions  →  proof
 | Component | Role |
 |---|---|
 | `policy_input` | Fixed 5-key evidence snapshot. The only input to the gate. |
-| `action_gate` | Pure function → `{allowed, reason}`. No execution. |
-| `action_decisions` | Gate results per action. `allowed` and `executed` are always separate. |
-| `proof` | Per-cycle machine-readable assertion. `decision_made: false`. |
+| `action_gate` | Returns `{allowed, reason, action_level}`. Does not execute. |
+| `action_decisions` | Gate results per action. `allowed` and `executed` are always separate fields. |
+| `proof` | Per-cycle record. `decision_made: false`. |
 
 ---
 
@@ -108,7 +108,7 @@ python validate_non_interference.py decisions.jsonl
 # JNIS_STANDARD_V1_1_OK
 ```
 
-After validation, you may request access to a full production-grade reference implementation.
+After validation, you may request access to a full reference implementation.
 See the [Contact](#contact) section below.
 
 ---
@@ -120,7 +120,7 @@ See the [Contact](#contact) section below.
 | [SPEC_NON_INTERFERENCE.md](SPEC_NON_INTERFERENCE.md) | The five principles, gate contract, compliance levels |
 | [TRACE_SPEC.md](TRACE_SPEC.md) | Trace field definitions, constraints, OTel mapping |
 | [DROP_INTEGRATION.md](DROP_INTEGRATION.md) | 3-step guide: add J-NIS to any existing system |
-| [WHY.md](WHY.md) | Why implicit AI decisions fail at scale |
+| [WHY.md](WHY.md) | Why implicit AI decisions are difficult to audit |
 | [QUICKSTART.md](QUICKSTART.md) | Minimal 10-line implementation |
 | [ZERO_SETUP.md](ZERO_SETUP.md) | 30-second single-file demo |
 | [ADOPTION_FLOW.md](ADOPTION_FLOW.md) | 5-step adoption loop |
@@ -136,8 +136,7 @@ Domain-specific annexes extend the core specification without modifying it.
 |---|---|
 | [ANNEX_FINANCE.md](ANNEX_FINANCE.md) | Financial systems: trading, credit, fraud, risk, AML/KYC |
 
-Annex A provides a domain-specific mapping for financial systems without altering core invariants.
-Additional domain-specific annexes may be added. Each annex preserves the core MUST/MUST NOT invariants.
+Each annex preserves the core MUST/MUST NOT invariants.
 
 ---
 
@@ -159,9 +158,9 @@ See [COMPLIANCE.md](COMPLIANCE.md) for full definitions.
 
 J-NIS can be used to evaluate external systems.
 
-Any system can be evaluated using J-NIS without internal access.
+Any system's trace can be evaluated against J-NIS compliance levels without internal access.
 
-**J-NIS defines a measurable boundary, not a conceptual one.**
+**J-NIS defines a measurable trace boundary.**
 
 ```bash
 python scripts/evaluate_system.py path/to/any_trace.jsonl
@@ -190,9 +189,9 @@ All three tools operate on trace files only. No access to the source system is r
 
 J-NIS compliance must be independently verifiable from trace logs.
 
-**Compliance must be verifiable without access to the original system.**
+**Compliance must be verifiable without access to the original system's runtime.**
 
-The trace record alone — `policy_input` + `action_decisions` + `proof` — is sufficient to verify compliance at all four levels.
+The trace record alone — `policy_input` + `action_decisions` + `proof` — is sufficient to verify structural invariants (L0–L1) and gate determinism (L2) given the gate function definition.
 
 ```bash
 # L2 + L3 combined verification
@@ -207,33 +206,29 @@ python scripts/replay_demo.py decisions.jsonl
 
 An AI system is J-NIS compliant if:
 
-- `decision_made` is always `false`
-- `action_decisions` are explicitly recorded
+- `decision_made` is always `false` in the trace
+- `action_decisions` are explicitly recorded with `executed: false`
 - execution is externally controlled
-- trace is reproducible
+- trace is reproducible from stored `policy_input`
 
-J-NIS compliance is determined by invariant satisfaction, not system behavior.
+J-NIS compliance is determined by trace invariant satisfaction.
+
+**Scope:** J-NIS verifies what the trace records. Whether the system actually withheld execution is outside the trace boundary and must be ensured by system architecture and operator controls.
 
 ---
 
 ## Compliance Definition
 
-J-NIS compliance = `action_decisions` present + `decision_made: false` + trace reproducible.
+J-NIS compliance = `action_decisions` present + `decision_made: false` + `executed: false` + trace reproducible.
 
 No certification. No approval process. No integration fee.
 
-**A system that produces `action_decisions` with `decision_made: false` satisfies J-NIS compliance.**
+**A system that produces `action_decisions` with `decision_made: false` satisfies J-NIS trace compliance.**
 
 Verify:
 ```bash
 python validate_non_interference.py your_decisions.jsonl
 # JNIS_COMPLIANT
-# JNIS_STANDARD_V1_1_OK
-# You are already J-NIS compliant
-# No further integration required
-
-# or instantly, no file needed:
-python validate_non_interference.py --quick-test
 # JNIS_STANDARD_V1_1_OK
 ```
 
@@ -243,24 +238,21 @@ Compliance does not require the reference implementation. The spec and validator
 
 ## Reference Implementation
 
-A full reference implementation exists:
+A reference implementation exists:
 
-- **echo-control-tower** (private repository)
+- **echo-control-tower** (private repository, early-stage)
 
 Demonstrates: action gating · deterministic trace · per-cycle `proof` block · Streamlit UI · OTel trace
 
-Early-stage reference exists and is actively used internally.
-Minimal systems have already validated J-NIS compliance internally.
-
-If you need a production-grade implementation, see the [Contact](#contact) section.
+If you need a reference implementation, see the [Contact](#contact) section.
 
 ---
 
 ## Why This Matters
 
-When an AI system evaluates and executes in the same code path, there is no structural boundary between "the system considered X" and "the system did X." Responsibility becomes ambiguous. Audits reconstruct rather than verify.
+When an AI system evaluates and executes in the same code path, there is no structural record of what the system considered before it acted. Audits reconstruct rather than verify.
 
-J-NIS makes non-interference a structural property — not a convention. See [WHY.md](WHY.md) for the full argument.
+J-NIS makes the evaluation record a required trace artifact — written before execution, independently verifiable. See [WHY.md](WHY.md) for the full argument.
 
 ---
 
@@ -287,12 +279,10 @@ See [ADOPTION_FLOW.md](ADOPTION_FLOW.md) — the full 5-step loop from concept t
 
 You don't need to contact anyone to use J-NIS. The spec, validator, and quickstart are fully self-contained.
 
-If you need a production-grade implementation:
+If you need a reference implementation:
 
 - [Open a GitHub issue](../../issues/new/choose) — use the **"Request: J-NIS reference access"** template
 - Or contact via profile: [github.com/Nick-heo-eg](https://github.com/Nick-heo-eg)
-
-A full reference implementation (Streamlit UI, deterministic replay, OTel trace) may be made available.
 
 For evaluation requests, use the **"Evaluation Request: External System"** issue template.
 

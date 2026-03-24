@@ -1,13 +1,8 @@
 # ZERO_SETUP — Run J-NIS in 30 seconds
 
-> **If this runs successfully, J-NIS compliance is satisfied.**
+> **Run this to see a J-NIS-compliant trace record.**
 
 No pip install. No framework. No config. One file, one command.
-
-```bash
-curl -O https://raw.githubusercontent.com/Nick-heo-eg/jnis-spec/main/ZERO_SETUP.md
-# or just copy the code below into any .py file
-```
 
 ---
 
@@ -92,11 +87,11 @@ J-NIS invariants satisfied — validate with: python validate_non_interference.p
 ## What just happened
 
 - You built a gate that evaluated two actions
-- Neither executed — `executed` is always `False` here
-- `decision_made` is always `False` — the gate does not decide
-- The trace record proves it
+- Neither executed — `executed` is always `False` in this record
+- `decision_made` is always `False` — the trace records that no decision was made
+- The record satisfies J-NIS structural invariants
 
-That is J-NIS. Compliance is satisfied.
+Save the output to `decisions.jsonl` and run the validator to confirm.
 
 ---
 
@@ -105,5 +100,3 @@ That is J-NIS. Compliance is satisfied.
 - Save the output to `decisions.jsonl` and run `python validate_non_interference.py decisions.jsonl`
 - See [QUICKSTART.md](QUICKSTART.md) to add persistence
 - See [DROP_INTEGRATION.md](DROP_INTEGRATION.md) to integrate into an existing system
-
-This demonstration verifies invariant satisfaction.

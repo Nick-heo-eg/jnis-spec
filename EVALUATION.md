@@ -1,13 +1,13 @@
 # EVALUATION — J-NIS External Evaluation Protocol
 
-> Any system can be evaluated using J-NIS without internal access.
+> Any system's trace can be evaluated against J-NIS compliance levels without internal access.
 > Input: a trace file. Output: compliance level, violations, summary.
 
 ---
 
 ## Purpose
 
-J-NIS defines a measurable boundary, not a conceptual one.
+J-NIS defines a measurable trace boundary.
 This protocol enables independent evaluation of any system's trace against J-NIS compliance levels.
 
 ---
@@ -28,15 +28,16 @@ Each record must be a single JSON object. Records without `policy_input` or `pro
 
 For each record: `proof.decision_made` must be `false`.
 
-Failure → L0 violation. The system asserted decision authority.
+Failure → L0 violation. The record does not carry a non-interference assertion.
 
 ### Step 2 — Check `action_decisions`
 
-For each record: `action_decisions` must be present, non-empty, and contain `action`, `allowed`, `reason`, `executed` per entry.
+For each record: `action_decisions` must be present, non-empty, and contain `action`, `allowed`, `reason`, `action_level`, `executed` per entry.
 
 `executed` must be `false` in all entries.
+`reason` must be from the declared `VALID_REASONS` set.
 
-Failure → L1 violation. Gate results were not recorded, or execution was flagged.
+Failure → L1 violation. Gate results were not recorded, execution was flagged, or an unrecognized reason was used.
 
 ### Step 3 — Check invariant set
 
@@ -80,7 +81,7 @@ On violation:
   "violations": [
     "[2026-01-01T00:00:00+00:00] L0 VIOLATION: proof.decision_made = true"
   ],
-  "summary": "1 violation found. System does not satisfy J-NIS compliance."
+  "summary": "1 violation found across 3 records. System does not satisfy J-NIS compliance."
 }
 ```
 
@@ -92,7 +93,8 @@ On violation:
 python scripts/evaluate_system.py path/to/trace.jsonl
 ```
 
-No access to the evaluated system is required. The trace is sufficient.
+No access to the evaluated system is required. The trace is sufficient for L0–L1 and L3.
+L2 (replay) requires the gate function definition.
 
 ---
 
@@ -104,6 +106,6 @@ No access to the evaluated system is required. The trace is sufficient.
 | `scripts/replay_demo.py` | Trace reconstruction (L2 + L3) | Determinism verification |
 | `scripts/evaluate_system.py` | External system assessment | Any system's trace |
 
-This protocol is domain-agnostic and applies to financial systems without modification.
-Financial traces MAY be evaluated without domain-specific extensions.
+This protocol is domain-agnostic.
+Financial traces may be evaluated with additional domain-specific requirements.
 See [ANNEX_FINANCE.md](ANNEX_FINANCE.md) for domain-specific compliance mapping and audit procedure.
