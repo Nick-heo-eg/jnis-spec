@@ -103,3 +103,37 @@ Examples: autonomous infrastructure management, AI-assisted medical triage routi
 J-NIS is the first formalization of the structural separation between AI evaluation and execution — with a verifiable trace format, a pure-function gate contract, and a reference implementation that demonstrates all three compliance levels simultaneously.
 
 The claim is not "AI can't make decisions." The claim is: **if you want to prove that AI didn't make a decision, this is the structure that makes that proof possible.**
+
+---
+
+## Adoption Path
+
+J-NIS is designed to be adopted incrementally. Any system at any stage can move toward compliance:
+
+```
+Small system
+    │
+    ▼
+Add policy_input
+    Convert your state into a fixed 5-key evidence snapshot.
+    No gate yet — just structure your observations.
+    │
+    ▼
+Add gate
+    Write a pure function: (action, policy_input) → {allowed, reason}.
+    It cannot execute. It only evaluates.
+    │
+    ▼
+Add trace
+    Write a record before execution: policy_input + action_decisions + proof.
+    decision_made: false. Always.
+    │
+    ▼
+Full non-interference system
+    Gate is deterministic. Trace is append-only. Replay is verifiable.
+    Run validate_non_interference.py → JNIS_COMPLIANT.
+```
+
+Each step adds a structural guarantee independently of the others. A system that only adds `policy_input` is more compliant than one that doesn't. A system that only adds the trace is more auditable than one that doesn't.
+
+J-NIS is not all-or-nothing. It is a direction.

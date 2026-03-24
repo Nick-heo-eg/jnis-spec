@@ -100,10 +100,10 @@ def main():
         print(f"  {w}")
 
     if ok:
-        print("OK — all records satisfy J-NIS guarantees")
+        print("JNIS_COMPLIANT — all records satisfy J-NIS guarantees")
         sys.exit(0)
     else:
-        print(f"FAIL — {len(failures)} violation(s):")
+        print(f"JNIS_VIOLATION — {len(failures)} violation(s):")
         for f in failures:
             print(f"  {f}")
         sys.exit(1)

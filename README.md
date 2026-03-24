@@ -57,9 +57,11 @@ See [QUICKSTART.md](QUICKSTART.md) — implement J-NIS in 10 lines of code.
 
 ```bash
 python validate_non_interference.py decisions.jsonl
-# Records checked: N
-# OK — all records satisfy J-NIS guarantees
+# Records checked: 1
+# JNIS_COMPLIANT — all records satisfy J-NIS guarantees
 ```
+
+After validation, you may request access to a full production-grade reference implementation.
 
 ---
 
@@ -98,6 +100,26 @@ Access may be provided upon request.
 When an AI system evaluates and executes in the same code path, there is no structural boundary between "the system considered X" and "the system did X." Responsibility becomes ambiguous. Audits reconstruct rather than verify.
 
 J-NIS makes non-interference a structural property — not a convention. See [WHY.md](WHY.md) for the full argument.
+
+---
+
+## Compliance
+
+If your system produces `decision_made: false` with a valid trace, it is J-NIS compliant.
+
+Verify with:
+```bash
+python validate_non_interference.py your_decisions.jsonl
+# JNIS_COMPLIANT
+```
+
+Compliance does not require the reference implementation. The spec and validator are sufficient.
+
+---
+
+## Adoption Path
+
+See [ADOPTION_FLOW.md](ADOPTION_FLOW.md) — the full 5-step loop from concept to production.
 
 ---
 
